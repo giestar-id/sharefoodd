@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><title>ShareFood - Makanan Diambil</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary": "#974247", "on-surface-muted": "#6D7A71", "on-secondary-container": "#4e6b58", "outline": "#E3EAE5", "on-surface-variant": "#3e4942", "scrim": "#0A2617", "surface-container-low": "#ecf6ed", "surface-container": "#e6f1e7", "secondary": "#486552", "badge-bg": "#E8F5ED", "on-tertiary-fixed": "#40010a", "inverse-surface": "#29332c", "secondary-fixed": "#caead2", "surface-dim": "#d3ddd3", "tertiary-fixed": "#ffdad9", "on-primary-fixed": "#002112", "on-secondary-fixed": "#042012", "tertiary-container": "#b65a5e", "on-background": "#151e18", "on-tertiary-container": "#ffffff", "primary-fixed-dim": "#7cd9a7", "surface-tint": "#006c46", "inverse-primary": "#7cd9a7", "primary-pressed": "#176644", "primary": "#006c45", "on-secondary": "#ffffff", "on-secondary-fixed-variant": "#314d3b", "on-primary-fixed-variant": "#005233", "surface-container-high": "#e1ebe1", "on-surface": "#202923", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "success": "#23865B", "on-primary": "#ffffff", "background": "#F8FAF8", "on-error-container": "#93000a", "outline-variant": "#bec9c0", "on-primary-container": "#ffffff", "tertiary-fixed-dim": "#ffb3b4", "on-tertiary-fixed-variant": "#7b2c32", "surface-container-highest": "#dbe5dc", "on-error": "#ffffff", "secondary-container": "#caead2", "inverse-on-surface": "#e9f3ea", "surface-variant": "#dbe5dc", "secondary-fixed-dim": "#afceb7", "primary-container": "#23865b", "on-tertiary": "#ffffff", "error": "#C94B45", "surface-bright": "#f2fcf2", "primary-fixed": "#98f6c2", "surface": "#FFFFFF" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "20px", "space-xs": "0.25rem", "md": "16px", "lg": "24px", "xs": "4px", "space-sm": "0.5rem", "sm": "8px", "space-md": "1rem", "gutter": "16px", "space-xl": "2rem", "xl": "32px", "space-lg": "1.5rem" }, "fontFamily": { "caption": ["Montserrat"], "title-md": ["Montserrat"], "body-md": ["Montserrat"], "label-md": ["Montserrat"], "headline-lg": ["Montserrat"], "headline-lg-mobile": ["Montserrat"] }, "fontSize": { "caption": ["12px", { "lineHeight": "1.35", "letterSpacing": "0.01em", "fontWeight": "500" }], "title-md": ["18px", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg-mobile": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-scrim z-50 flex flex-col justify-between py-6 px-4 select-none -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none"><div class="flex flex-col gap-6"><div class="flex items-center gap-3 px-3 py-2"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">eco</span></div><span class="font-title-md text-title-md text-on-primary tracking-tight font-bold">ShareFood</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary font-bold shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="ringkasan" href="#">Ringkasan</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="makanan-saya" href="#">Makanan Saya</a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-bold shadow-sm" data-path="makanan-diambil" href="#">Makanan Diambil</a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="permintaan-masuk" href="#"><span>Permintaan Masuk</span><span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption text-caption">3</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="riwayat" href="#">Riwayat</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="profil" href="#">Profil</a></nav></div><div class="px-3"><div class="p-3 rounded-xl bg-secondary/30 flex items-center gap-3"><span class="material-symbols-outlined text-primary-fixed text-[20px]">volunteer_activism</span><div class="flex flex-col"><span class="font-caption text-caption text-secondary-fixed">Komunitas Berbagi</span><span class="font-caption text-caption text-on-surface-variant text-[11px]">Aktif 2.4k Warga</span></div></div></div></aside><div class="lg:pl-64 pl-0 transition-all min-h-screen flex flex-col"><header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface/95 backdrop-blur-md border-b border-outline z-30 flex items-center justify-between px-4 sm:px-6 transition-all"><div class="flex items-center gap-3"><button id="sidebar-toggle" class="lg:hidden p-2 -ml-2 rounded-xl text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center" aria-label="Buka Menu" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><span class="font-title-md text-title-md text-on-surface font-semibold truncate">Halo, Budi</span></div><div class="flex items-center gap-4"><button class="flex items-center gap-2 bg-primary-container hover:bg-primary-pressed text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Bagikan Makanan</span></button><div class="h-6 w-px bg-outline"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><div class="hidden sm:flex flex-col items-end"><span class="font-label-md text-label-md text-on-surface">Budi Santoso</span><span class="px-2 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption text-[11px]">Warga Terverifikasi</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8 max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption uppercase tracking-wider">Pelacak Pengambilan</span>
+<span class="text-on-surface-muted text-xs font-mono">REQ-2025-v1</span>
+</div>
+<h1 class="font-headline-lg text-2xl sm:text-headline-lg text-on-surface tracking-tight font-bold">Makanan Diambil</h1>
+<p class="font-body-md text-body-md text-on-surface-muted max-w-2xl">
+          Pantau status pengajuan ambil makanan dan jadwal penjemputan mandiri Anda secara real-time.
+        </p>
+</div>
+<!-- Quick Metrics Pill Banner -->
+<div class="flex items-center gap-3 bg-surface p-2 rounded-2xl shadow-sm border border-outline">
+<div class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[20px]">local_shipping</span>
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-muted leading-tight">Jadwal Aktif</span>
+<span class="font-title-md text-title-md text-on-surface leading-none font-bold">1 Makanan</span>
+</div>
+</div>
+<div class="h-8 w-px bg-outline"></div>
+<div class="flex items-center gap-2.5 px-3 py-1.5">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">schedule</span>
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-muted leading-tight">Menunggu</span>
+<span class="font-title-md text-title-md text-on-surface leading-none font-bold">1 Permintaan</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Chips Nav -->
+<div class="flex items-center justify-between gap-4 overflow-x-auto pb-1 select-none">
+<div class="flex items-center gap-2 min-w-max" id="filterChipsContainer">
+<button class="filter-chip active-filter px-4 py-2 rounded-full font-label-md text-label-md transition-all duration-200 bg-primary-container text-on-primary shadow-sm" data-filter="all" type="button">
+          Semua <span class="ml-1 opacity-80">(3)</span>
+</button>
+<button class="filter-chip px-4 py-2 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface text-on-surface-variant hover:bg-surface-container-low border border-outline" data-filter="menunggu" type="button">
+          Menunggu <span class="ml-1 text-on-surface-muted text-xs">(1)</span>
+</button>
+<button class="filter-chip px-4 py-2 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface text-on-surface-variant hover:bg-surface-container-low border border-outline" data-filter="disetujui" type="button">
+          Disetujui <span class="ml-1 text-on-surface-muted text-xs">(1)</span>
+</button>
+<button class="filter-chip px-4 py-2 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface text-on-surface-variant hover:bg-surface-container-low border border-outline" data-filter="ditolak" type="button">
+          Ditolak <span class="ml-1 text-on-surface-muted text-xs">(1)</span>
+</button>
+<button class="filter-chip px-4 py-2 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface text-on-surface-muted hover:bg-surface-container-low border border-outline opacity-60 cursor-not-allowed" data-filter="dibatalkan" type="button">
+          Dibatalkan <span class="ml-1 text-xs">(0)</span>
+</button>
+</div>
+<!-- Search bar mini utility -->
+<div class="relative min-w-[240px] hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-muted text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-sm bg-surface rounded-xl border border-outline text-on-surface placeholder:text-on-surface-muted focus:outline-none focus:border-primary transition-colors" id="tableSearchInput" placeholder="Cari pesanan makanan..." type="text"/>
+</div>
+</div>
+<!-- Main Table Container -->
+<div class="w-full bg-surface rounded-[20px] border border-outline shadow-sm overflow-hidden flex flex-col">
+<div class="hidden sm:block overflow-x-auto w-full">
+<table class="w-full border-collapse text-left" id="requestsTable">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant border-b border-outline">
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold" scope="col">Makanan</th>
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold" scope="col">Pemberi</th>
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold whitespace-nowrap" scope="col">Tanggal Permintaan</th>
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold whitespace-nowrap" scope="col">Usulan Jam Ambil</th>
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold" scope="col">Status</th>
+<th class="py-4 px-6 font-label-md text-label-md tracking-normal font-semibold text-right" scope="col">Tindakan</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline">
+<!-- Row 1: Approved -->
+<tr class="request-row hover:bg-surface-container-low/40 transition-colors group" data-status="disetujui" data-title="Susu Oat Barista Organik">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3.5">
+<div class="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clean refrigerated modern carton of barista grade organic oat milk sitting on a tidy kitchen counter with soft daylighting, sustainable zero-waste packaging, calm soft green tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAiNMWj8Tyk2LYtbbW9eqW_Tash_1vO5LZdLiaXBBNqis_wV41OxCuP8B2EDhYfQrhQwvgnbnmayTLkkhicELNB4EH4ejFdMCCXiMp_M3z3sPI1kJULDRZCIp73AormuOwjPT5dhvIWu515mMOXlBvTeoI-_6vksKKqIq2v0CNXY3QO9nbxd-pfnbLtizwmKGqepqi1cjVJK68ZE_sLwLwM1vAs5r5OTlJNefJfA"/>
+<div class="absolute bottom-1 right-1 bg-scrim/75 backdrop-blur-sm rounded-md px-1 py-0.2">
+<span class="text-[9px] text-white font-mono leading-none">1L</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Susu Oat Barista Organik</span>
+<span class="font-caption text-caption text-on-surface-muted flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span> Minuman Nabati • Layak Simpan 4 Hari
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs ring-2 ring-surface shadow-xs">
+                    ID
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface leading-tight">Ibu Dewi</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Tebet, Jakarta Selatan</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface">Hari ini, 09:15</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Respon: 15 menit</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]">schedule</span>
+<span class="font-label-md text-label-md">Hari ini, 16:30 WIB</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-badge-bg text-success font-caption text-caption font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                  Disetujui
+                </span>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="btn-detail inline-flex items-center gap-1.5 bg-primary-container hover:bg-primary-pressed text-on-primary px-4 py-2 rounded-xl font-label-md text-label-md transition-colors shadow-xs" data-address="Jl. Tebet Barat Dalam VI No. 14, Jakarta Selatan" data-giver="Ibu Dewi" data-notes="Silakan ambil di pagar samping, bel nomor 2. Wadah dingin sudah disiapkan." data-status="Disetujui" data-status-class="bg-badge-bg text-success" data-time="Hari ini, 16:30 WIB" data-title="Susu Oat Barista Organik" type="button">
+<span>Lihat Detail</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Pending -->
+<tr class="request-row hover:bg-surface-container-low/40 transition-colors group" data-status="menunggu" data-title="Nasi Kotak Ayam Bakar Madu">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3.5">
+<div class="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A neatly packed Indonesian meal box with grilled honey chicken, fragrant yellow rice, fresh cucumber slices and sambal, warm natural restaurant lighting, high quality food display" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLzS8ESSCfh1zR66oMPfomfIPGXJUFwMU6wYMjiT-kvEH-JKhV4nsr4u37IJ3RDnLc0pTh3QlHt4-yAuY4VpJc-mnWLJl1BT4G3OQiC18n8Dl90WyYFXaMNdGImRRbh4U7B_w1Nj76NDnCW_EO3vsmEDg9mnClgaRiD7W-FvFtXR037CiOmWxRADbFE1dkF6iDTrcxCGXsYUZ1TRKZ7pbPuT6r190JGzDCAiKSOQ"/>
+<div class="absolute bottom-1 right-1 bg-scrim/75 backdrop-blur-sm rounded-md px-1 py-0.2">
+<span class="text-[9px] text-white font-mono leading-none">2 Box</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Nasi Kotak Ayam Bakar Madu</span>
+<span class="font-caption text-caption text-on-surface-muted flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span> Makanan Siap Santap • Baik sebelum 21:00
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-xs ring-2 ring-surface shadow-xs">
+                    BS
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface leading-tight">Budi Santoso</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Pancoran, Jakarta Selatan</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface">Hari ini, 11:45</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Menunggu konfirmasi pemberi</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface text-on-surface border border-outline">
+<span class="material-symbols-outlined text-on-surface-muted text-[16px]">schedule</span>
+<span class="font-label-md text-label-md">Hari ini, 18:30 WIB</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FEF3C7] text-[#784F04] font-caption text-caption font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#784F04]"></span>
+                  Menunggu
+                </span>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="btn-detail inline-flex items-center gap-1.5 bg-surface hover:bg-surface-container-low text-on-surface px-4 py-2 rounded-xl font-label-md text-label-md border border-outline transition-colors" data-address="Komplek Bidakara, Pancoran Kav 8" data-giver="Budi Santoso" data-notes="Menunggu persetujuan pemilik untuk pengambilan malam ini. Sediakan tas jinjing sendiri." data-status="Menunggu" data-status-class="bg-[#FEF3C7] text-[#784F04]" data-time="Hari ini, 18:30 WIB" data-title="Nasi Kotak Ayam Bakar Madu" type="button">
+<span>Lihat Detail</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Declined -->
+<tr class="request-row hover:bg-surface-container-low/40 transition-colors group" data-status="ditolak" data-title="Pisang Cavendish 1 Sisir">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3.5">
+<div class="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80" data-alt="A ripe yellow bunch of cavendish bananas freshly harvested on an eco-friendly wooden kitchen island, bright crisp natural morning lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe0HXRwN404PojMdsz47i5n6K8otSRGiqJjJSaC0jG8dYfJuRMUf8lDb74pNtaXA3thsNyGqS6BdSJvXCWeRgIgglm-PizY1J85eiexASy1hZj7OgzDSRmSIH8seZYPSKvFlIOkHCgqUTeqXpKEW2hQ_DbVZvWE0fRcHespgBz_Kmo9KeWSy3pqLf8CduW_DesFviAIWwx0yMGQVF9amXEMgELhnjORt2_RJkt-A"/>
+<div class="absolute bottom-1 right-1 bg-scrim/75 backdrop-blur-sm rounded-md px-1 py-0.2">
+<span class="text-[9px] text-white font-mono leading-none">1 Sisir</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate line-through decoration-on-surface-muted/50 text-on-surface-muted group-hover:text-on-surface transition-colors">Pisang Cavendish 1 Sisir</span>
+<span class="font-caption text-caption text-on-surface-muted flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Buah Segar • Sudah tidak tersedia
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-xs ring-2 ring-surface shadow-xs">
+                    PH
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface leading-tight">Pak Hendra</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Mampang Prapatan</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface">Kemarin, 14:20</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Alasan: Telah diambil warga lain</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface text-on-surface-muted border border-outline line-through">
+<span class="material-symbols-outlined text-on-surface-muted text-[16px]">schedule</span>
+<span class="font-label-md text-label-md">Kemarin, 17:00 WIB</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FEE2E2] text-[#C94B45] font-caption text-caption font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#C94B45]"></span>
+                  Ditolak
+                </span>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="btn-detail inline-flex items-center gap-1.5 bg-surface hover:bg-surface-container-low text-on-surface px-4 py-2 rounded-xl font-label-md text-label-md border border-outline transition-colors" data-address="Jl. Kemang Timur No. 42" data-giver="Pak Hendra" data-notes="Mohon maaf, stok sudah lebih dulu diambil oleh tetangga terdekat sebelum permintaan terkonfirmasi." data-status="Ditolak" data-status-class="bg-[#FEE2E2] text-[#C94B45]" data-time="Kemarin, 17:00 WIB" data-title="Pisang Cavendish 1 Sisir" type="button">
+<span>Lihat Detail</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Mobile Card List View -->
+<div class="sm:hidden flex flex-col divide-y divide-outline">
+  <!-- Card 1: Approved -->
+  <div class="p-4 flex flex-col gap-3 hover:bg-surface-container-low/40 transition-colors">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container">
+          <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAiNMWj8Tyk2LYtbbW9eqW_Tash_1vO5LZdLiaXBBNqis_wV41OxCuP8B2EDhYfQrhQwvgnbnmayTLkkhicELNB4EH4ejFdMCCXiMp_M3z3sPI1kJULDRZCIp73AormuOwjPT5dhvIWu515mMOXlBvTeoI-_6vksKKqIq2v0CNXY3QO9nbxd-pfnbLtizwmKGqepqi1cjVJK68ZE_sLwLwM1vAs5r5OTlJNefJfA" alt="Susu"/>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="font-label-md text-label-md font-bold text-on-surface truncate">Susu Oat Barista Organik</span>
+          <span class="font-caption text-caption text-on-surface-muted">Pemberi: Ibu Dewi • Tebet Barat</span>
+          <span class="font-caption text-[11px] text-primary font-semibold mt-0.5">Ambil: Hari ini, 16:30 WIB</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption font-bold shrink-0">
+        Disetujui
+      </span>
+    </div>
+    <div class="flex items-center justify-between pt-1">
+      <span class="font-caption text-caption text-on-surface-muted">Diajukan: Hari ini, 12:45</span>
+      <a href="./s19_detail_makanan_diambil_approved_dashboard_makanan_diambil_request.html" class="px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md text-xs font-semibold flex items-center gap-1">
+        <span>Buka Detail</span>
+        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      </a>
+    </div>
+  </div>
+  <!-- Card 2: Menunggu -->
+  <div class="p-4 flex flex-col gap-3 hover:bg-surface-container-low/40 transition-colors">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container">
+          <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF0_2Hq" alt="Roti"/>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="font-label-md text-label-md font-bold text-on-surface truncate">Sourdough Loaf Artisan</span>
+          <span class="font-caption text-caption text-on-surface-muted">Pemberi: Toko Roti Lestari</span>
+          <span class="font-caption text-[11px] text-tertiary-container font-semibold mt-0.5">Usulan: Besok, 09:00 WIB</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-caption text-caption font-semibold shrink-0">
+        Menunggu
+      </span>
+    </div>
+    <div class="flex items-center justify-between pt-1">
+      <span class="font-caption text-caption text-on-surface-muted">Menunggu respon donatur</span>
+      <a href="./s19_detail_makanan_diambil_approved_dashboard_makanan_diambil_request.html" class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-xs font-semibold">Detail</a>
+    </div>
+  </div>
+</div>
+<!-- Table Footer / Summary -->
+<div class="px-6 py-4 bg-surface flex flex-col sm:flex-row items-center justify-between gap-3 text-on-surface-muted border-t border-outline">
+<span class="font-caption text-caption">Menampilkan 3 dari 3 permohonan aktif</span>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-success font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">verified</span> Komitmen Bebas Sampah Pangan
+          </span>
+</div>
+</div>
+</div>
+<!-- Active Pickup Card & Info Guide Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Active Pickup Map & Location Snippet -->
+<div class="lg:col-span-1 bg-surface rounded-[20px] p-5 border border-outline shadow-sm flex flex-col justify-between gap-4">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption uppercase tracking-wider text-success font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-success animate-ping"></span> Penjemputan Berikutnya
+            </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[11px]">T-3 Jam</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface">Susu Oat Barista Organik</h2>
+<p class="font-body-md text-body-md text-on-surface-muted">Tebet Barat Dalam VI No. 14, Jakarta Selatan</p>
+</div>
+<!-- Mini map component -->
+<div class="w-full h-32 rounded-xl bg-cover bg-center relative overflow-hidden group shadow-inner" data-location="Tebet Barat Dalam VI, Jakarta Selatan" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCcrMgslYGwm_JmqZp-QN0qjeBbtny9iSSHtONLtDSvgVWyxiRfkZVDUROPTssttGc3HxNyIBA2K_fcDW2umT0IVpWNsmgLXVD_rsOo3K21u2j0GZ1la34pnWLtZfTN_fxSCWsRW5eu399Pztd1Jtcmeuy1EJPrHqMAPqWxldUD-Bx93sha_j0pIbdfVFL2vdN4nyHQedq4otQB4Vwq5uUmpCzi6oXKfmAXnVj93A')">
+<div class="absolute inset-0 bg-scrim/20 group-hover:bg-scrim/10 transition-colors"></div>
+<div class="absolute bottom-2 left-2 bg-surface/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-semibold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[14px]">location_on</span> Area: Tebet Barat, Jakarta Selatan
+          </div>
+</div>
+<a class="w-full py-2.5 rounded-xl border border-outline hover:bg-surface-container-low text-on-surface text-center font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5" href="https://maps.google.com" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">directions</span> Buka Navigasi Rute
+        </a>
+</div>
+<!-- Bottom helper info card (2 columns wide) -->
+<div class="lg:col-span-2 bg-surface-container-low rounded-[20px] p-6 border border-outline flex flex-col justify-between gap-6 relative overflow-hidden">
+<!-- Subtle decorative backdrop graphic -->
+<div class="absolute -right-8 -bottom-8 w-44 h-44 rounded-full bg-primary/5 pointer-events-none"></div>
+<div class="flex flex-col gap-4 relative z-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[22px]">info</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-on-surface">Panduan Pengambilan Mandiri</h3>
+<p class="font-caption text-caption text-on-surface-muted">Etika dan kelancaran serah terima makanan komunitas</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Pastikan datang tepat waktu sesuai jam yang disepakati dan bawa wadah/tas belanja sendiri. Hormati privasi donatur serta periksa kondisi kesegaran makanan secara bersamaan di titik temu.
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+<div class="flex items-start gap-2 bg-surface p-3 rounded-xl border border-outline">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">timer</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Tepat Waktu</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Toleransi maks. 15 mnt</span>
+</div>
+</div>
+<div class="flex items-start gap-2 bg-surface p-3 rounded-xl border border-outline">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">shopping_bag</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Bawa Wadah</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Kurangi kantong kresek</span>
+</div>
+</div>
+<div class="flex items-start gap-2 bg-surface p-3 rounded-xl border border-outline">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">handshake</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Konfirmasi Selesai</span>
+<span class="font-caption text-caption text-on-surface-muted text-[11px]">Klik selesai di aplikasi</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs text-on-surface-muted border-t border-outline/70 pt-3 relative z-10">
+<span>Butuh bantuan komunikasi darurat dengan warga?</span>
+<button class="text-primary hover:underline font-semibold inline-flex items-center gap-1" type="button">
+            Hubungi Moderator RT <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Detail Modal Dialog Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-xs hidden transition-opacity duration-200" id="detailModal">
+<div class="bg-surface w-full max-w-lg rounded-[20px] border border-outline p-6 flex flex-col gap-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full font-caption text-caption font-semibold w-max mb-1.5" id="modalStatusBadge">
+            Status
+          </span>
+<h2 class="font-headline-lg text-[22px] text-on-surface leading-tight" id="modalFoodTitle">Detail Pengambilan</h2>
+</div>
+<button class="p-2 rounded-xl text-on-surface-muted hover:bg-surface-container-low hover:text-on-surface transition-colors" id="closeModalBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-4 bg-surface-container-low p-4 rounded-xl border border-outline">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption text-on-surface-muted">Pemberi Makanan</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="modalGiverName">-</span>
+</div>
+<div class="h-px bg-outline"></div>
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption text-on-surface-muted">Rencana Waktu Ambil</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="modalPickupTime">-</span>
+</div>
+<div class="h-px bg-outline"></div>
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted">Alamat / Lokasi Pengambilan</span>
+<span class="font-body-md text-body-md text-on-surface" id="modalAddress">-</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Catatan Penjemputan:</span>
+<p class="font-body-md text-body-md text-on-surface-variant bg-surface p-3 rounded-xl border border-outline leading-relaxed" id="modalNotes">
+          -
+        </p>
+</div>
+<div class="flex items-center justify-end gap-3 pt-2">
+<button class="px-5 py-2.5 rounded-xl border border-outline bg-surface hover:bg-surface-container-low text-on-surface font-label-md text-label-md transition-colors" id="closeModalFooterBtn" type="button">
+          Tutup
+        </button>
+<button class="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary-pressed text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1.5" id="modalActionBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">chat</span> Chat Pemberi
+        </button>
+</div>
+</div>
+</div>
+<script>
+    (function initPickupScreen() {
+      // 1. Filter Chips Logic
+      const filterChips = document.querySelectorAll('.filter-chip');
+      const tableRows = document.querySelectorAll('.request-row');
+
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+          const filterValue = this.getAttribute('data-filter');
+          if (filterValue === 'dibatalkan') return;
+
+          // Reset active styling
+          filterChips.forEach(c => {
+            c.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-sm');
+            c.classList.add('bg-surface', 'text-on-surface-variant', 'border', 'border-outline');
+          });
+
+          // Set current active
+          this.classList.remove('bg-surface', 'text-on-surface-variant', 'border', 'border-outline');
+          this.classList.add('bg-primary-container', 'text-on-primary', 'shadow-sm');
+
+          // Filter rows
+          tableRows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (filterValue === 'all' || status === filterValue) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // 2. Real-time Search Filter
+      const searchInput = document.getElementById('tableSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          const query = this.value.toLowerCase().trim();
+          tableRows.forEach(row => {
+            const title = (row.getAttribute('data-title') || '').toLowerCase();
+            if (!query || title.includes(query)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // 3. Detail Modal Logic
+      const detailModal = document.getElementById('detailModal');
+      const detailButtons = document.querySelectorAll('.btn-detail');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const closeModalFooterBtn = document.getElementById('closeModalFooterBtn');
+
+      const modalFoodTitle = document.getElementById('modalFoodTitle');
+      const modalStatusBadge = document.getElementById('modalStatusBadge');
+      const modalGiverName = document.getElementById('modalGiverName');
+      const modalPickupTime = document.getElementById('modalPickupTime');
+      const modalAddress = document.getElementById('modalAddress');
+      const modalNotes = document.getElementById('modalNotes');
+
+      detailButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const title = this.getAttribute('data-title');
+          const giver = this.getAttribute('data-giver');
+          const time = this.getAttribute('data-time');
+          const address = this.getAttribute('data-address');
+          const notes = this.getAttribute('data-notes');
+          const status = this.getAttribute('data-status');
+          const statusClass = this.getAttribute('data-status-class');
+
+          modalFoodTitle.textContent = title;
+          modalGiverName.textContent = giver;
+          modalPickupTime.textContent = time;
+          modalAddress.textContent = address;
+          modalNotes.textContent = notes;
+
+          modalStatusBadge.textContent = status;
+          modalStatusBadge.className = 'inline-flex items-center gap-1 px-3 py-0.5 rounded-full font-caption text-caption font-semibold w-max mb-1.5 ' + statusClass;
+
+          detailModal.classList.remove('hidden');
+        });
+      });
+
+      function hideModal() {
+        detailModal.classList.add('hidden');
+      }
+
+      if (closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
+      if (closeModalFooterBtn) closeModalFooterBtn.addEventListener('click', hideModal);
+
+      // Close modal on backdrop click
+      detailModal.addEventListener('click', function(e) {
+        if (e.target === detailModal) {
+          hideModal();
+        }
+      });
+    })();
+  </script>
+</div></main></div><script src="./nav.js"></script>
+</body></html>

@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --maroon: #6B1D2F;
+  --maroon-dark: #4A121F;
+  --maroon-light: #8B263E;
+  --maroon-subtle: #F5EAEB;
+  --cream: #F9F5EC;
+  --bg-warm: #FDFBF7;
+  --border-warm: #E8E2D5;
+  --green-action: #2E7D32;
+  --green-hover: #246B27;
+  --green-soft: #E8F5E9;
+  --orange-action: #E65100;
+  --orange-soft: #FFF3E0;
+  --blue-action: #1565C0;
+  --blue-soft: #E3F2FD;
+  --text-main: #333333;
+  --text-muted: #666666;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-maroon: #6B1D2F;
+  --color-maroon-dark: #4A121F;
+  --color-maroon-light: #8B263E;
+  --color-maroon-subtle: #F5EAEB;
+  --color-cream: #F9F5EC;
+  --color-bg-warm: #FDFBF7;
+  --color-border-warm: #E8E2D5;
+  --color-action-green: #2E7D32;
+  --color-action-green-hover: #246B27;
+  --color-badge-green-bg: #E8F5E9;
+  --color-badge-green-text: #2E7D32;
+  --color-badge-orange-bg: #FFF3E0;
+  --color-badge-orange-text: #E65100;
+  --color-badge-blue-bg: #E3F2FD;
+  --color-badge-blue-text: #1565C0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-warm);
+  color: var(--text-main);
+  font-family: 'Segoe UI', Montserrat, Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E8E2D5;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C4BCAC;
 }

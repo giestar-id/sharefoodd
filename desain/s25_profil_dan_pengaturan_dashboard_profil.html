@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><title>ShareFood - Profil & Pengaturan</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary": "#974247", "on-surface-muted": "#6D7A71", "on-secondary-container": "#4e6b58", "outline": "#E3EAE5", "on-surface-variant": "#3e4942", "scrim": "#0A2617", "surface-container-low": "#ecf6ed", "surface-container": "#e6f1e7", "secondary": "#486552", "badge-bg": "#E8F5ED", "on-tertiary-fixed": "#40010a", "inverse-surface": "#29332c", "secondary-fixed": "#caead2", "surface-dim": "#d3ddd3", "tertiary-fixed": "#ffdad9", "on-primary-fixed": "#002112", "on-secondary-fixed": "#042012", "tertiary-container": "#b65a5e", "on-background": "#151e18", "on-tertiary-container": "#ffffff", "primary-fixed-dim": "#7cd9a7", "surface-tint": "#006c46", "inverse-primary": "#7cd9a7", "primary-pressed": "#176644", "primary": "#006c45", "on-secondary": "#ffffff", "on-secondary-fixed-variant": "#314d3b", "on-primary-fixed-variant": "#005233", "surface-container-high": "#e1ebe1", "on-surface": "#202923", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "success": "#23865B", "on-primary": "#ffffff", "background": "#F8FAF8", "on-error-container": "#93000a", "outline-variant": "#bec9c0", "on-primary-container": "#ffffff", "tertiary-fixed-dim": "#ffb3b4", "on-tertiary-fixed-variant": "#7b2c32", "surface-container-highest": "#dbe5dc", "on-error": "#ffffff", "secondary-container": "#caead2", "inverse-on-surface": "#e9f3ea", "surface-variant": "#dbe5dc", "secondary-fixed-dim": "#afceb7", "primary-container": "#23865b", "on-tertiary": "#ffffff", "error": "#C94B45", "surface-bright": "#f2fcf2", "primary-fixed": "#98f6c2", "surface": "#FFFFFF" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "20px", "space-xs": "0.25rem", "md": "16px", "lg": "24px", "xs": "4px", "space-sm": "0.5rem", "sm": "8px", "space-md": "1rem", "gutter": "16px", "space-xl": "2rem", "xl": "32px", "space-lg": "1.5rem" }, "fontFamily": { "caption": ["Montserrat"], "title-md": ["Montserrat"], "body-md": ["Montserrat"], "label-md": ["Montserrat"], "headline-lg": ["Montserrat"], "headline-lg-mobile": ["Montserrat"] }, "fontSize": { "caption": ["12px", { "lineHeight": "1.35", "letterSpacing": "0.01em", "fontWeight": "500" }], "title-md": ["18px", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg-mobile": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-scrim z-50 flex flex-col justify-between py-6 px-4 select-none -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none"><div class="flex flex-col gap-6"><div class="flex items-center gap-3 px-3 py-2"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">eco</span></div><span class="font-title-md text-title-md text-on-primary tracking-tight font-bold">ShareFood</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary font-bold shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="ringkasan" href="#">Ringkasan</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="makanan-saya" href="#">Makanan Saya</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="makanan-diambil" href="#">Makanan Diambil</a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="permintaan-masuk" href="#"><span>Permintaan Masuk</span><span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption text-caption">3</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="riwayat" href="#">Riwayat</a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-bold shadow-sm" data-path="profil" href="#">Profil</a></nav></div><div class="px-3"><div class="p-3 rounded-xl bg-secondary/30 flex items-center gap-3"><span class="material-symbols-outlined text-primary-fixed text-[20px]">volunteer_activism</span><div class="flex flex-col"><span class="font-caption text-caption text-secondary-fixed">Komunitas Berbagi</span><span class="font-caption text-caption text-on-surface-variant text-[11px]">Aktif 2.4k Warga</span></div></div></div></aside><div class="lg:pl-64 pl-0 transition-all min-h-screen flex flex-col"><header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface/95 backdrop-blur-md border-b border-outline z-30 flex items-center justify-between px-4 sm:px-6 transition-all"><div class="flex items-center gap-3"><button id="sidebar-toggle" class="lg:hidden p-2 -ml-2 rounded-xl text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center" aria-label="Buka Menu" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><span class="font-title-md text-title-md text-on-surface font-semibold truncate">Halo, Budi</span></div><div class="flex items-center gap-4"><button class="flex items-center gap-2 bg-primary-container hover:bg-primary-pressed text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Bagikan Makanan</span></button><div class="h-6 w-px bg-outline"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><div class="hidden sm:flex flex-col items-end"><span class="font-label-md text-label-md text-on-surface">Budi Santoso</span><span class="px-2 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption text-[11px]">Warga Terverifikasi</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full relative">
+<div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-6xl mx-auto w-full flex flex-col gap-6 sm:gap-8 pb-20">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-muted uppercase tracking-wider">Pengaturan Akun</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-caption text-caption text-primary font-semibold">Aktif</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Profil &amp; Keamanan</h1>
+<p class="font-body-md text-body-md text-on-surface-muted">Kelola data identitas warga, preferensi akun, dan kredensial keamanan Anda.</p>
+</div>
+<!-- Impact Counter Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface rounded-2xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col gap-2 relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-badge-bg text-success font-caption text-caption font-semibold">TAKEN</span>
+<span class="font-caption text-caption text-on-surface-muted">Status Selesai</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface">Makanan Dibagikan</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">18</span>
+<span class="font-body-md text-body-md text-on-surface-muted">Transaksi Selesai</span>
+</div>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[32px]">volunteer_activism</span>
+</div>
+</div>
+<div class="bg-surface rounded-2xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-secondary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col gap-2 relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-secondary font-caption text-caption font-semibold">COMPLETED</span>
+<span class="font-caption text-caption text-on-surface-muted">Status Selesai</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface">Makanan Diterima</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-lg text-headline-lg text-secondary font-bold">4</span>
+<span class="font-body-md text-body-md text-on-surface-muted">Transaksi Selesai</span>
+</div>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-secondary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[32px]">soup_kitchen</span>
+</div>
+</div>
+</div>
+<!-- Main Settings Bento -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+<!-- Profile Info Card -->
+<section class="lg:col-span-7 bg-surface rounded-2xl p-5 sm:p-7 shadow-sm flex flex-col gap-6 border border-outline">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-md text-title-md text-on-surface">Data Pribadi</h2>
+<span class="font-caption text-caption text-on-surface-muted">Informasi publik yang terlihat oleh penerima donasi</span>
+</div>
+</div>
+<span class="font-caption text-caption px-3 py-1 bg-badge-bg text-success rounded-full font-medium">Terverifikasi</span>
+</div>
+<!-- Avatar Section -->
+<div class="flex items-center gap-5 p-4 rounded-xl bg-background">
+<div class="relative w-20 h-20 rounded-full overflow-hidden bg-surface-container flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A clean, friendly, front-facing portrait of an Indonesian man named Budi Santoso in his early thirties with a warm welcoming smile, wearing a dark green organic polo shirt against a minimalist natural indoor plant background in soft studio light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0NH7GtXayGqFe510EFO1n6Ae6HJUyWhq4ok_xy54BYeiHDx8bx-_Fgttnlx-76BRf4RRP37v_jV9FPr23395Zl28sq2hJmnzFjA8j_CH0qOble8XxVNFoKcKJVLQv2_V3d7Xo0c596WaXCJvXqbfzeQf6b6fsDyZ3YzQ2XuT6pg5BH4ApObedaMijXUrcN3-2cyXlgsKwR6AuHtWh38AnrMC21A6bQr_LdXOE3g"/>
+<button class="absolute inset-0 bg-scrim/40 hover:bg-scrim/60 flex items-center justify-center text-on-primary opacity-0 hover:opacity-100 transition-opacity" title="Ubah Foto" type="button">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</button>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-on-surface truncate">Budi Santoso</span>
+<span class="material-symbols-outlined text-success text-[18px]" title="Identitas KTP Terkonfirmasi">verified</span>
+</div>
+<span class="font-caption text-caption text-on-surface-muted">Format JPG, PNG atau WebP. Maksimum 2MB.</span>
+<div class="flex items-center gap-2 mt-1">
+<button class="font-label-md text-label-md text-primary hover:text-primary-pressed transition-colors" type="button">Unggah Baru</button>
+<span class="text-on-surface-muted">•</span>
+<button class="font-label-md text-label-md text-tertiary hover:opacity-80 transition-opacity" type="button">Hapus</button>
+</div>
+</div>
+</div>
+<form class="flex flex-col gap-5" onsubmit="event.preventDefault();">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="nama_lengkap">Nama Lengkap</label>
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="nama_lengkap" type="text" value="Budi Santoso"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="email_akun">Alamat Email</label>
+<div class="relative">
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all pr-12" id="email_akun" type="email" value="budi.santoso@email.com"/>
+<span class="material-symbols-outlined absolute right-4 top-3.5 text-on-surface-muted text-[20px]">mail</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface" for="telepon">Nomor Telepon</label>
+<span class="font-caption text-caption text-on-surface-muted">Opsional</span>
+</div>
+<div class="relative">
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all pr-12" id="telepon" placeholder="08xxxxxxxxxx" type="tel" value="0812-9876-5432"/>
+<span class="material-symbols-outlined absolute right-4 top-3.5 text-on-surface-muted text-[20px]">phone</span>
+</div>
+<p class="font-caption text-caption text-on-surface-muted">Nomor ini memudahkan kurir relawan mengonfirmasi titik jemput donasi.</p>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="bg-primary hover:bg-primary-pressed text-on-primary font-label-md text-label-md px-6 py-3 rounded-xl transition-all shadow-sm flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Profil</span>
+</button>
+</div>
+</form>
+</section>
+<!-- Security & Danger Zone Column -->
+<div class="lg:col-span-5 flex flex-col gap-6 sm:gap-8">
+<!-- Change Password Card -->
+<section class="bg-surface rounded-2xl p-5 sm:p-7 shadow-sm flex flex-col gap-6 border border-outline">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">lock_reset</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-md text-title-md text-on-surface">Ubah Password</h2>
+<span class="font-caption text-caption text-on-surface-muted">Perbarui kata sandi secara berkala</span>
+</div>
+</div>
+<form class="flex flex-col gap-4" onsubmit="event.preventDefault();">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="pw_lama">Password Saat Ini</label>
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="pw_lama" placeholder="••••••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="pw_baru">Password Baru</label>
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="pw_baru" placeholder="Minimal 8 karakter kombinasi" type="password"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="pw_konf">Konfirmasi Password Baru</label>
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="pw_konf" placeholder="Ketik ulang password baru" type="password"/>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="bg-surface hover:bg-background text-on-surface font-label-md text-label-md px-5 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[18px]">key</span>
+<span>Ubah Password</span>
+</button>
+</div>
+</form>
+</section>
+<!-- Danger Zone Card -->
+<section class="bg-surface rounded-2xl p-5 sm:p-7 shadow-sm flex flex-col gap-5 relative overflow-hidden border border-outline">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-md text-title-md text-error">Zona Berbahaya</h2>
+<span class="font-caption text-caption text-on-surface-muted">Tindakan akun yang tidak dapat dibatalkan</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Pastikan Anda telah menyelesaikan semua transaksi makanan aktif sebelum keluar atau mengajukan penghapusan akun.
+          </p>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+<button class="w-full sm:w-1/2 bg-background hover:bg-surface-container text-on-surface font-label-md text-label-md py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm" type="button" onclick="if(confirm('Apakah Anda yakin ingin keluar dari akun?')) location.href='./s6_login_login.html'">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>Keluar dari Akun</span>
+</button>
+<button class="w-full sm:w-1/2 bg-error hover:opacity-90 text-on-error font-label-md text-label-md py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm" id="open-delete-dialog-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_forever</span>
+<span>Hapus Akun</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- Centered Modal Overlay & Scrim Backdrop (#0A2617 at 50% opacity) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-[2px] transition-opacity duration-200 hidden" id="delete-modal-overlay">
+<!-- Centered 400px Modal Dialog -->
+<div class="bg-surface w-full max-w-[400px] rounded-[20px] p-6 shadow-2xl relative flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150" style="box-shadow: 0 20px 40px rgba(10,38,23,0.18);">
+<!-- Icon Header -->
+<div class="flex flex-col items-center text-center">
+<div class="w-14 h-14 rounded-full bg-error-container flex items-center justify-center text-error mb-3 shadow-inner">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">Hapus Akun Permanen?</h3>
+<p class="font-body-md text-body-md text-on-surface-muted mt-2 text-center">
+          Tindakan ini akan menghapus semua riwayat donasi, postingan makanan aktif, dan data profil Anda secara permanen dari ShareFood.
+        </p>
+</div>
+<!-- Password Confirmation Input -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface font-medium" for="modal-confirm-password">
+          Masukkan password Anda untuk konfirmasi
+        </label>
+<div class="relative">
+<input class="w-full bg-background rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-error/30 transition-all" id="modal-confirm-password" placeholder="Password saat ini" type="password"/>
+</div>
+<!-- Unified Error Status Reference Preview / Helper -->
+<div class="flex items-center gap-1.5 text-tertiary">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span class="font-caption text-caption">Data yang dihapus tidak dapat dipulihkan kembali.</span>
+</div>
+</div>
+<!-- Footer Buttons -->
+<div class="mt-2 flex items-center justify-end gap-3">
+<button class="bg-surface hover:bg-background text-on-surface font-label-md text-label-md px-4 py-2.5 rounded-xl shadow-sm transition-colors" id="cancel-delete-btn" type="button">
+          Batal
+        </button>
+<button class="bg-error hover:opacity-95 text-on-error font-label-md text-label-md font-semibold px-5 py-2.5 rounded-[12px] shadow-sm transition-all flex items-center gap-1.5" id="confirm-delete-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+<span>Hapus Akun</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+    (function() {
+      // Sync active state on the shell's navigation sidebar
+      const activeNav = document.querySelector('aside nav a[data-path="profil"]');
+      if (activeNav) {
+        document.querySelectorAll('aside nav a').forEach(el => {
+          el.classList.remove('bg-primary-container', 'text-on-primary', 'font-bold', 'shadow-sm');
+          el.classList.add('text-secondary-fixed-dim');
+        });
+        activeNav.classList.remove('text-secondary-fixed-dim');
+        activeNav.classList.add('bg-primary-container', 'text-on-primary', 'font-bold', 'shadow-sm');
+      }
+
+      // Dialog toggle micro-interactions
+      const overlay = document.getElementById('delete-modal-overlay');
+      const openBtn = document.getElementById('open-delete-dialog-btn');
+      const cancelBtn = document.getElementById('cancel-delete-btn');
+      const confirmBtn = document.getElementById('confirm-delete-btn');
+      const passwordInput = document.getElementById('modal-confirm-password');
+
+      function closeModal() {
+        overlay.classList.add('hidden');
+        if (passwordInput) passwordInput.value = '';
+      }
+
+      function openModal() {
+        overlay.classList.remove('hidden');
+        if (passwordInput) passwordInput.focus();
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+      }
+
+      if (openBtn) {
+        openBtn.addEventListener('click', openModal);
+      }
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+          if (!passwordInput.value) {
+            passwordInput.classList.add('ring-2', 'ring-error');
+            passwordInput.focus();
+            return;
+          }
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span><span>Memproses...</span>';
+          setTimeout(function() {
+            closeModal();
+            alert('Akun Anda berhasil dihapus.');
+            location.href = './s1_beranda.html';
+          }, 800);
+        });
+      }
+
+      // Close on backdrop click outside dialog
+      if (overlay) {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) {
+            closeModal();
+          }
+        });
+      }
+    })();
+  </script>
+</div></main></div><script src="./nav.js"></script>
+</body></html>

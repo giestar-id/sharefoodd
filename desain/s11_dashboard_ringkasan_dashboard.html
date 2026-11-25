@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>ShareFood - Ringkasan Dashboard</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#006c45",
+            "primary-container": "#23865b",
+            "primary-pressed": "#176644",
+            secondary: "#486552",
+            "secondary-container": "#caead2",
+            "secondary-fixed": "#caead2",
+            "on-secondary-fixed": "#042012",
+            surface: "#FFFFFF",
+            background: "#F8FAF8",
+            "surface-container": "#e6f1e7",
+            "surface-container-low": "#ecf6ed",
+            "surface-container-high": "#e1ebe1",
+            "badge-bg": "#E8F5ED",
+            outline: "#E3EAE5",
+            "on-surface": "#202923",
+            "on-surface-muted": "#6D7A71",
+            "on-primary": "#ffffff",
+            scrim: "#0A2617",
+            success: "#23865B",
+            error: "#C94B45"
+          },
+          fontFamily: {
+            body: ["Montserrat", "sans-serif"],
+            heading: ["Montserrat", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased">
+
+  <!-- Responsive Sidebar Drawer -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-scrim z-50 flex flex-col justify-between py-6 px-4 select-none -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none">
+    <div class="flex flex-col gap-6">
+      <!-- Sidebar Brand -->
+      <div class="flex items-center gap-3 px-3 py-2 cursor-pointer" onclick="window.location.href='./s1_beranda.html'">
+        <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+          <span class="material-symbols-outlined text-[22px]">eco</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading text-lg text-white font-extrabold tracking-tight">ShareFood</span>
+          <span class="text-[10px] text-emerald-300/80 font-medium">Bebas Sampah Pangan</span>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="flex flex-col gap-1.5" data-active-classes="bg-primary-container text-white font-bold shadow-sm">
+        <a aria-current="page" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors bg-primary-container text-white font-bold shadow-sm text-sm" data-path="ringkasan" href="./s11_dashboard_ringkasan_dashboard.html">
+          <span class="material-symbols-outlined text-[20px]">dashboard</span>
+          <span>Ringkasan</span>
+        </a>
+        <a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-emerald-100/70 hover:bg-emerald-900/40 hover:text-white transition-colors text-sm font-medium" data-path="makanan-saya" href="./s13_makanan_saya_dashboard_makanan_saya.html">
+          <span class="material-symbols-outlined text-[20px]">restaurant</span>
+          <span>Makanan Saya</span>
+        </a>
+        <a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-emerald-100/70 hover:bg-emerald-900/40 hover:text-white transition-colors text-sm font-medium" data-path="makanan-diambil" href="./s18_makanan_diambil_dashboard_makanan_diambil.html">
+          <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+          <span>Makanan Diambil</span>
+        </a>
+        <a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-emerald-100/70 hover:bg-emerald-900/40 hover:text-white transition-colors text-sm font-medium" data-path="permintaan-masuk" href="./s22_permintaan_masuk_dashboard_permintaan_masuk.html">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px]">inbox</span>
+            <span>Permintaan Masuk</span>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-xs">3</span>
+        </a>
+        <a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-emerald-100/70 hover:bg-emerald-900/40 hover:text-white transition-colors text-sm font-medium" data-path="riwayat" href="./s24_riwayat_dashboard_riwayat.html">
+          <span class="material-symbols-outlined text-[20px]">history</span>
+          <span>Riwayat</span>
+        </a>
+        <a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-emerald-100/70 hover:bg-emerald-900/40 hover:text-white transition-colors text-sm font-medium" data-path="profil" href="./s25_profil_dan_pengaturan_dashboard_profil.html">
+          <span class="material-symbols-outlined text-[20px]">person</span>
+          <span>Profil</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Community Badge in Sidebar -->
+    <div class="px-2">
+      <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+        <span class="material-symbols-outlined text-emerald-400 text-[22px]">volunteer_activism</span>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold text-emerald-200">Komunitas Berbagi</span>
+          <span class="text-[11px] text-emerald-400/80">Aktif 2.4k Warga</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Area (Responsive Offset) -->
+  <div class="lg:pl-64 pl-0 transition-all min-h-screen flex flex-col">
+    
+    <!-- Top Header Bar -->
+    <header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface/95 backdrop-blur-md border-b border-outline z-30 flex items-center justify-between px-4 sm:px-6 lg:px-8 transition-all">
+      <div class="flex items-center gap-3">
+        <button id="sidebar-toggle" class="lg:hidden p-2 -ml-2 rounded-xl text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center" aria-label="Buka Menu" type="button">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+        <div>
+          <h1 class="font-heading font-bold text-base sm:text-lg text-on-surface leading-tight">Halo, Budi 👋</h1>
+          <p class="text-xs text-on-surface-muted hidden sm:block">Selamat datang di pusat kendali donasimu</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Quick Action Bagikan Makanan -->
+        <a href="./s12_modal_bagikan_makanan_makanan_buat.html" class="inline-flex items-center gap-1.5 bg-primary-container hover:bg-primary-pressed text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs shrink-0">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span class="hidden sm:inline">Bagikan Makanan</span>
+          <span class="sm:hidden">Bagikan</span>
+        </a>
+
+        <div class="h-6 w-px bg-outline mx-1 hidden sm:block"></div>
+
+        <!-- Notification Bell -->
+        <button class="relative p-2 rounded-xl text-on-surface-muted hover:bg-surface-container hover:text-on-surface transition-colors" type="button" aria-label="Notifikasi">
+          <span class="material-symbols-outlined text-[22px]">notifications</span>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2.5 pl-1 cursor-pointer" onclick="window.location.href='./s25_profil_dan_pengaturan_dashboard_profil.html'">
+          <div class="hidden md:flex flex-col items-end">
+            <span class="text-xs font-bold text-on-surface">Budi Santoso</span>
+            <span class="text-[10px] font-semibold text-primary bg-badge-bg px-2 py-0.5 rounded-full">Warga Terverifikasi</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white shadow-xs">
+            <span class="material-symbols-outlined text-[18px]">person</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full pt-16 bg-background flex-1">
+      <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+        
+        <!-- 1. Alert Banner Permintaan Masuk (Pending) -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-300/80 shadow-xs transition-all hover:bg-amber-100/70">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-amber-200/70 flex items-center justify-center shrink-0 text-amber-900 shadow-xs">
+              <span class="material-symbols-outlined text-[24px]">notifications_active</span>
+            </div>
+            <div>
+              <h2 class="font-heading font-bold text-sm sm:text-base text-amber-950">Ada 3 permintaan masuk menunggu keputusanmu</h2>
+              <p class="text-xs text-amber-800/90 mt-0.5">Segera konfirmasi calon penerima sebelum batas waktu makanan terlewati.</p>
+            </div>
+          </div>
+          <a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm transition-colors whitespace-nowrap shadow-xs shrink-0" href="./s22_permintaan_masuk_dashboard_permintaan_masuk.html">
+            <span>Tinjau Permintaan</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </a>
+        </div>
+
+        <!-- 2. Dual-Intent Entry Cards (Saya Ingin Berbagi vs Saya Ingin Mengambil) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          
+          <!-- Card Donatur (Giver) -->
+          <div class="relative overflow-hidden rounded-2xl bg-surface border border-outline p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+            <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-secondary-container/40 pointer-events-none transition-transform group-hover:scale-110"></div>
+            <div class="relative z-10 space-y-3">
+              <div class="w-12 h-12 rounded-xl bg-primary-container text-white flex items-center justify-center shadow-xs">
+                <span class="material-symbols-outlined text-[26px]">volunteer_activism</span>
+              </div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-secondary">Inisiatif Berbagi</span>
+                <h3 class="font-heading font-bold text-lg text-on-surface mt-0.5">Saya Ingin Berbagi Makanan</h3>
+              </div>
+              <p class="text-xs sm:text-sm text-on-surface-muted leading-relaxed">
+                Punya kelebihan makanan layak santap dari rumah atau katering? Bantu warga sekitar dalam 90 detik.
+              </p>
+            </div>
+            <div class="relative z-10 pt-5 mt-2">
+              <a href="./s12_modal_bagikan_makanan_makanan_buat.html" class="inline-flex items-center gap-2 bg-primary-container hover:bg-primary-pressed text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-xs">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                <span>Bagikan Makanan</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card Penerima (Receiver) -->
+          <div class="relative overflow-hidden rounded-2xl bg-surface border border-outline p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+            <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-surface-container-high/60 pointer-events-none transition-transform group-hover:scale-110"></div>
+            <div class="relative z-10 space-y-3">
+              <div class="w-12 h-12 rounded-xl bg-surface-container text-primary flex items-center justify-center shadow-xs">
+                <span class="material-symbols-outlined text-[26px]">explore</span>
+              </div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-on-surface-muted">Temukan Makanan</span>
+                <h3 class="font-heading font-bold text-lg text-on-surface mt-0.5">Saya Ingin Mengambil Makanan</h3>
+              </div>
+              <p class="text-xs sm:text-sm text-on-surface-muted leading-relaxed">
+                Jelajahi sajian makanan surplus siap ambil di sekitarmu hari ini secara 100% sukarela dan gratis.
+              </p>
+            </div>
+            <div class="relative z-10 pt-5 mt-2">
+              <a href="./s2_daftar_makanan_makanan.html" class="inline-flex items-center gap-2 bg-surface hover:bg-surface-container text-on-surface border border-outline px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-xs">
+                <span>Lihat Makanan Tersedia</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. Empat Kartu Ringkasan KPI Utama -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          
+          <!-- KPI 1 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-surface border border-outline shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-on-surface-muted">Postingan Aktif</span>
+              <span class="w-8 h-8 rounded-lg bg-badge-bg text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px]">restaurant</span>
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-heading text-2xl sm:text-3xl font-extrabold text-on-surface">2</span>
+              <span class="text-[11px] font-bold text-primary bg-badge-bg px-2 py-0.5 rounded-full">Aktif</span>
+            </div>
+            <span class="text-[11px] text-on-surface-muted mt-1.5">Sedang tayang di katalog</span>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-surface border border-outline shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-on-surface-muted">Permintaan Masuk</span>
+              <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-heading text-2xl sm:text-3xl font-extrabold text-amber-900">3</span>
+              <span class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Menunggu</span>
+            </div>
+            <span class="text-[11px] text-on-surface-muted mt-1.5">Perlu keputusan donatur</span>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-surface border border-outline shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-on-surface-muted">Pengambilan Aktif</span>
+              <span class="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-fixed flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-heading text-2xl sm:text-3xl font-extrabold text-on-surface">1</span>
+              <span class="text-[11px] font-bold text-secondary bg-secondary-container px-2 py-0.5 rounded-full">Disetujui</span>
+            </div>
+            <span class="text-[11px] text-on-surface-muted mt-1.5">Siap dijemput mandiri</span>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-surface border border-outline shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-on-surface-muted">Total Selesai</span>
+              <span class="w-8 h-8 rounded-lg bg-surface-container text-on-surface-muted flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="font-heading text-2xl sm:text-3xl font-extrabold text-on-surface">14</span>
+              <span class="text-[11px] font-bold text-on-surface-muted bg-surface-container px-2 py-0.5 rounded-full">Porsi</span>
+            </div>
+            <span class="text-[11px] text-on-surface-muted mt-1.5">Total transaksi berhasil</span>
+          </div>
+
+        </div>
+
+        <!-- 4. Tabel Aktivitas Terbaru (Proporsional Desktop + Kartu Responsif Mobile) -->
+        <div class="rounded-2xl bg-surface border border-outline shadow-xs overflow-hidden">
+          
+          <!-- Table Header Card Bar -->
+          <div class="p-4 sm:p-5 border-b border-outline flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">dataset</span>
+              <h3 class="font-heading font-bold text-sm sm:text-base text-on-surface">Aktivitas Terbaru</h3>
+            </div>
+            <a href="./s24_riwayat_dashboard_riwayat.html" class="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-primary hover:text-primary-pressed transition-colors">
+              <span>Lihat Semua Riwayat</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Desktop & Tablet Table View -->
+          <div class="hidden sm:block overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-surface-container-low/60 text-on-surface-muted text-xs uppercase tracking-wider font-semibold border-b border-outline">
+                  <th class="py-3.5 px-6">Tipe Aktivitas</th>
+                  <th class="py-3.5 px-6">Keterangan</th>
+                  <th class="py-3.5 px-6 whitespace-nowrap">Waktu</th>
+                  <th class="py-3.5 px-6">Status</th>
+                  <th class="py-3.5 px-6 text-right">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline">
+                
+                <!-- Row 1 -->
+                <tr class="hover:bg-surface-container-low/40 transition-colors">
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                      <span class="font-semibold text-on-surface text-xs">Permintaan Masuk</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-on-surface font-medium">Siti Rahma mengajukan ambil 2 porsi Nasi Bento Ayam Teriyaki</span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap text-xs text-on-surface-muted">
+                    10 menit lalu
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">PENDING</span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="./s22_permintaan_masuk_dashboard_permintaan_masuk.html" class="inline-flex items-center px-3.5 py-1.5 rounded-xl bg-primary-container hover:bg-primary-pressed text-white text-xs font-semibold transition-colors shadow-xs">
+                      Tinjau
+                    </a>
+                  </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr class="hover:bg-surface-container-low/40 transition-colors">
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                      <span class="font-semibold text-on-surface text-xs">Permintaan Masuk</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-on-surface font-medium">Ahmad Fauzi mengajukan ambil 1 porsi Nasi Bento Ayam Teriyaki</span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap text-xs text-on-surface-muted">
+                    25 menit lalu
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">PENDING</span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="./s22_permintaan_masuk_dashboard_permintaan_masuk.html" class="inline-flex items-center px-3.5 py-1.5 rounded-xl bg-primary-container hover:bg-primary-pressed text-white text-xs font-semibold transition-colors shadow-xs">
+                      Tinjau
+                    </a>
+                  </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr class="hover:bg-surface-container-low/40 transition-colors">
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                      <span class="font-semibold text-on-surface text-xs">Pengambilan Disetujui</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-on-surface font-medium">Permintaan Anda untuk Susu Oat Barista disetujui oleh Ibu Dewi</span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap text-xs text-on-surface-muted">
+                    2 jam lalu
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-bg text-primary text-[11px] font-bold">APPROVED</span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="./s19_detail_makanan_diambil_approved_dashboard_makanan_diambil_request.html" class="inline-flex items-center px-3.5 py-1.5 rounded-xl border border-outline bg-surface text-on-surface text-xs font-semibold hover:bg-surface-container transition-colors">
+                      Lihat Info Ambil
+                    </a>
+                  </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr class="hover:bg-surface-container-low/40 transition-colors">
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                      <span class="font-semibold text-on-surface text-xs">Makanan Diterbitkan</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-on-surface font-medium">Postingan baru Sayur Sop Ayam berhasil tayang di katalog</span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap text-xs text-on-surface-muted">
+                    Hari ini, 09:15
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-bg text-primary text-[11px] font-bold">AVAILABLE</span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="./s15_detail_makanan_saya_available_dashboard_makanan_saya_food.html" class="inline-flex items-center px-3.5 py-1.5 rounded-xl border border-outline bg-surface text-on-surface text-xs font-semibold hover:bg-surface-container transition-colors">
+                      Kelola
+                    </a>
+                  </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr class="hover:bg-surface-container-low/40 transition-colors">
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-on-surface-muted"></span>
+                      <span class="font-semibold text-on-surface text-xs">Transaksi Selesai</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-on-surface font-medium">Pengambilan Roti Sourdough selesai dengan Pak Hendra</span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap text-xs text-on-surface-muted">
+                    Kemarin, 19:30
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container text-on-surface-muted text-[11px] font-bold">TAKEN</span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="./s24_riwayat_dashboard_riwayat.html" class="inline-flex items-center px-3.5 py-1.5 rounded-xl border border-outline bg-surface text-on-surface text-xs font-semibold hover:bg-surface-container transition-colors">
+                      Detail
+                    </a>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card List View (Sangat Proporsional di Layar HP) -->
+          <div class="sm:hidden p-4 space-y-3 divide-y divide-outline">
+            
+            <!-- Mobile Item 1 -->
+            <div class="pt-3 first:pt-0 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  PENDING
+                </span>
+                <span class="text-[11px] text-on-surface-muted">10 mnt lalu</span>
+              </div>
+              <p class="text-xs font-semibold text-on-surface">Siti Rahma mengajukan ambil 2 porsi Nasi Bento Ayam Teriyaki</p>
+              <div class="flex justify-end pt-1">
+                <a href="./s22_permintaan_masuk_dashboard_permintaan_masuk.html" class="px-3.5 py-1.5 rounded-xl bg-primary-container text-white text-xs font-semibold">
+                  Tinjau Permintaan
+                </a>
+              </div>
+            </div>
+
+            <!-- Mobile Item 2 -->
+            <div class="pt-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-badge-bg px-2.5 py-0.5 rounded-full">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  APPROVED
+                </span>
+                <span class="text-[11px] text-on-surface-muted">2 jam lalu</span>
+              </div>
+              <p class="text-xs font-semibold text-on-surface">Permintaan Anda untuk Susu Oat disetujui Ibu Dewi</p>
+              <div class="flex justify-end pt-1">
+                <a href="./s19_detail_makanan_diambil_approved_dashboard_makanan_diambil_request.html" class="px-3.5 py-1.5 rounded-xl border border-outline text-xs font-semibold">
+                  Lihat Info Ambil
+                </a>
+              </div>
+            </div>
+
+            <!-- Mobile Item 3 -->
+            <div class="pt-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-badge-bg px-2.5 py-0.5 rounded-full">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  AVAILABLE
+                </span>
+                <span class="text-[11px] text-on-surface-muted">09:15</span>
+              </div>
+              <p class="text-xs font-semibold text-on-surface">Postingan baru Sayur Sop Ayam berhasil tayang</p>
+              <div class="flex justify-end pt-1">
+                <a href="./s15_detail_makanan_saya_available_dashboard_makanan_saya_food.html" class="px-3.5 py-1.5 rounded-xl border border-outline text-xs font-semibold">
+                  Kelola Postingan
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="./nav.js"></script>
+</body>
+</html>

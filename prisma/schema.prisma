@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 1. Model Pengguna (User) - Sesuai PRD Section 10
+model User {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  emailVerified DateTime?
+  phone         String?
+  avatar        String?
+  roleBadge     String          @default("Warga Terverifikasi")
+  joinedDate    String          @default("November 2026")
+  sharedCount   Int             @default(0)
+  receivedCount Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relasi
+  foods         Food[]
+  requests      PickupRequest[]
+  activities    Activity[]
+  accounts      Account[]
+  sessions      Session[]
+}
+
+// 2. Model Akun Autentikasi OAuth / Credentials (Better Auth / NextAuth)
+model Account {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId    String
+  providerId   String
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  password     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+}
+
+// 3. Model Sesi Login Pengguna (Session)
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 4. Model Token Verifikasi Email & Reset Password (Verification)
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
+// 5. Model Postingan Makanan (Food) - Sesuai PRD Section 10
+model Food {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ownerName      String
+  title          String
+  category       String          // makanan_berat, roti_kue, buah_sayur, bahan_mentah, minuman, lainnya
+  description    String?
+  quantity       Float
+  unit           String          // porsi, kotak, bungkus, kg, buah, loaf
+  preparedAt     String?
+  pickupDeadline String
+  areaLabel      String          // Area publik (misal: "Tebet Barat, Jakarta Selatan")
+  storageNotes   String?
+  allergens      String          // JSON Array alergen: ["Ayam", "Kedelai"]
+  status         String          @default("AVAILABLE") // AVAILABLE, RESERVED, TAKEN, CANCELLED
+  deletedAt      DateTime?       // Soft delete sesuai PRD Section 6 & 10
+  requestCount   Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  // Relasi Normalisasi
+  images         FoodImage[]
+  pickupDetail   PickupDetail?
+  requests       PickupRequest[]
+
+  @@index([status, pickupDeadline])
+}
+
+// 6. Model Foto Makanan Terpisah (FoodImage) - Sesuai PRD Section 10
+model FoodImage {
+  id        String   @id @default(cuid())
+  foodId    String
+  food      Food     @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  path      String   // URL foto atau path storage
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([foodId, sortOrder])
+}
+
+// 7. Model Detail Lokasi & Kontak Privat (PickupDetail) - Sesuai PRD Section 10 & 11 (Zero-Leakage Privacy)
+model PickupDetail {
+  id           String   @id @default(cuid())
+  foodId       String   @unique
+  food         Food     @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  fullAddress  String   // Alamat persis (hanya terbuka jika APPROVED)
+  landmark     String   // Patokan lokasi
+  contactPhone String   // Nomor WhatsApp / Telepon privat
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 8. Model Permohonan Pengambilan (PickupRequest) - Sesuai PRD Section 10
+model PickupRequest {
+  id                 String    @id @default(cuid())
+  foodId             String
+  food               Food      @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  foodTitle          String?
+  foodImage          String?
+  foodCategory       String?
+  requesterId        String
+  requester          User      @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  requesterName      String
+  requesterPhone     String?
+  requesterAvatar    String?
+  requesterStats     String?
+  message            String?
+  proposedPickupTime String
+  status             String    @default("PENDING") // PENDING, APPROVED, DECLINED, COMPLETED, CANCELLED
+  respondedAt        String?
+  activeFlag         Int?      // Flag 1 jika PENDING/APPROVED (cegah klaim ganda per user per makanan)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([foodId, status])
+}
+
+// 9. Model Log Riwayat Aktivitas Transaksi (Activity)
+model Activity {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String   // request_in, approved, declined, taken, posted
+  title       String
+  description String
+  timestamp   String
+  status      String
+  targetUrl   String?
+  createdAt   DateTime @default(now())
+}
+
+// 10. Model Pengaturan Sistem Sesi Aktif (AppSetting)
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @default(now()) @updatedAt
+}

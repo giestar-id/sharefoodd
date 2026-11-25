@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><title>ShareFood - Riwayat Transaksi</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary": "#974247", "on-surface-muted": "#6D7A71", "on-secondary-container": "#4e6b58", "outline": "#E3EAE5", "on-surface-variant": "#3e4942", "scrim": "#0A2617", "surface-container-low": "#ecf6ed", "surface-container": "#e6f1e7", "secondary": "#486552", "badge-bg": "#E8F5ED", "on-tertiary-fixed": "#40010a", "inverse-surface": "#29332c", "secondary-fixed": "#caead2", "surface-dim": "#d3ddd3", "tertiary-fixed": "#ffdad9", "on-primary-fixed": "#002112", "on-secondary-fixed": "#042012", "tertiary-container": "#b65a5e", "on-background": "#151e18", "on-tertiary-container": "#ffffff", "primary-fixed-dim": "#7cd9a7", "surface-tint": "#006c46", "inverse-primary": "#7cd9a7", "primary-pressed": "#176644", "primary": "#006c45", "on-secondary": "#ffffff", "on-secondary-fixed-variant": "#314d3b", "on-primary-fixed-variant": "#005233", "surface-container-high": "#e1ebe1", "on-surface": "#202923", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "success": "#23865B", "on-primary": "#ffffff", "background": "#F8FAF8", "on-error-container": "#93000a", "outline-variant": "#bec9c0", "on-primary-container": "#ffffff", "tertiary-fixed-dim": "#ffb3b4", "on-tertiary-fixed-variant": "#7b2c32", "surface-container-highest": "#dbe5dc", "on-error": "#ffffff", "secondary-container": "#caead2", "inverse-on-surface": "#e9f3ea", "surface-variant": "#dbe5dc", "secondary-fixed-dim": "#afceb7", "primary-container": "#23865b", "on-tertiary": "#ffffff", "error": "#C94B45", "surface-bright": "#f2fcf2", "primary-fixed": "#98f6c2", "surface": "#FFFFFF" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "20px", "space-xs": "0.25rem", "md": "16px", "lg": "24px", "xs": "4px", "space-sm": "0.5rem", "sm": "8px", "space-md": "1rem", "gutter": "16px", "space-xl": "2rem", "xl": "32px", "space-lg": "1.5rem" }, "fontFamily": { "caption": ["Montserrat"], "title-md": ["Montserrat"], "body-md": ["Montserrat"], "label-md": ["Montserrat"], "headline-lg": ["Montserrat"], "headline-lg-mobile": ["Montserrat"] }, "fontSize": { "caption": ["12px", { "lineHeight": "1.35", "letterSpacing": "0.01em", "fontWeight": "500" }], "title-md": ["18px", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg-mobile": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-scrim z-50 flex flex-col justify-between py-6 px-4 select-none -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none"><div class="flex flex-col gap-6"><div class="flex items-center gap-3 px-3 py-2"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">eco</span></div><span class="font-title-md text-title-md text-on-primary tracking-tight font-bold">ShareFood</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary font-bold shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="ringkasan" href="#">Ringkasan</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="makanan-saya" href="#">Makanan Saya</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="makanan-diambil" href="#">Makanan Diambil</a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="permintaan-masuk" href="#"><span>Permintaan Masuk</span><span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption text-caption">3</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-bold shadow-sm" data-path="riwayat" href="#">Riwayat</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary-fixed-dim hover:bg-secondary/40 hover:text-on-primary transition-colors font-body-md text-body-md" data-path="profil" href="#">Profil</a></nav></div><div class="px-3"><div class="p-3 rounded-xl bg-secondary/30 flex items-center gap-3"><span class="material-symbols-outlined text-primary-fixed text-[20px]">volunteer_activism</span><div class="flex flex-col"><span class="font-caption text-caption text-secondary-fixed">Komunitas Berbagi</span><span class="font-caption text-caption text-on-surface-variant text-[11px]">Aktif 2.4k Warga</span></div></div></div></aside><div class="lg:pl-64 pl-0 transition-all min-h-screen flex flex-col"><header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface/95 backdrop-blur-md border-b border-outline z-30 flex items-center justify-between px-4 sm:px-6 transition-all"><div class="flex items-center gap-3"><button id="sidebar-toggle" class="lg:hidden p-2 -ml-2 rounded-xl text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center" aria-label="Buka Menu" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><span class="font-title-md text-title-md text-on-surface font-semibold truncate">Halo, Budi</span></div><div class="flex items-center gap-4"><button class="flex items-center gap-2 bg-primary-container hover:bg-primary-pressed text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Bagikan Makanan</span></button><div class="h-6 w-px bg-outline"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-3 pl-2"><div class="hidden sm:flex flex-col items-end"><span class="font-label-md text-label-md text-on-surface">Budi Santoso</span><span class="px-2 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption text-[11px]">Warga Terverifikasi</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full relative min-h-[calc(100vh-4rem)]">
+<!-- Parent Screen: Riwayat Dashboard View -->
+<div id="main-content" class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col gap-6 max-w-7xl mx-auto w-full transition-all">
+<!-- Header Title & Metrics Strip -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted uppercase tracking-wider">Arsip Aktivitas Warga</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Riwayat Berbagi</h1>
+<p class="font-body-md text-body-md text-on-surface-muted">Seluruh jejak transaksi makanan yang telah rampung, terdistribusi, atau dibatalkan.</p>
+</div>
+<!-- Quick Metrics Counters -->
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-low px-4 py-2.5 rounded-xl flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-badge-bg flex items-center justify-center text-success">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-muted">Tuntas Terselamatkan</span>
+<span class="font-title-md text-title-md text-on-surface font-bold">48 Paket</span>
+</div>
+</div>
+<div class="bg-surface-container-low px-4 py-2.5 rounded-xl flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">co2</span>
+</div>
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-muted">Emisi Ditekan</span>
+<span class="font-title-md text-title-md text-on-surface font-bold">~64.2 kg</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Tabs & Search Controls -->
+<div class="bg-surface rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+<!-- Tabs -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl w-full sm:w-auto">
+<button class="px-5 py-2 rounded-lg font-label-md text-label-md bg-surface text-on-surface font-semibold shadow-xs" type="button">
+          Semua (18)
+        </button>
+<button class="px-5 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface" type="button">
+          Saya Bagikan (12)
+        </button>
+<button class="px-5 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface" type="button">
+          Saya Ambil (6)
+        </button>
+</div>
+<!-- Search Input Mock -->
+<div class="flex items-center gap-2 w-full sm:w-72 bg-background px-3 py-2 rounded-xl text-on-surface-muted">
+<span class="material-symbols-outlined text-[20px]">search</span>
+<span class="font-body-md text-body-md text-on-surface-muted">Cari riwayat arsip...</span>
+</div>
+</div>
+<!-- Riwayat Table Container -->
+<div class="bg-surface rounded-2xl overflow-hidden shadow-sm border border-outline">
+<!-- Desktop Grid View (hidden on mobile, visible on md+) -->
+<div class="hidden md:block">
+<div class="grid grid-cols-12 px-6 py-4 bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
+<div class="col-span-4">Item Makanan &amp; Kategori</div>
+<div class="col-span-2">Peran</div>
+<div class="col-span-3">Pihak Terkait</div>
+<div class="col-span-2">Waktu Selesai</div>
+<div class="col-span-1 text-right">Status</div>
+</div>
+<!-- Row 1 (Click to open modal) -->
+<div class="grid grid-cols-12 px-6 py-4 items-center bg-badge-bg/40 hover:bg-badge-bg/60 font-body-md text-body-md cursor-pointer transition-colors" onclick="openModal()">
+<div class="col-span-4 flex items-center gap-3">
+<div class="w-11 h-11 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Warm artisanal sourdough loaf and golden flaky croissants freshly baked on a clean wooden tabletop under natural morning light with neutral background tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqom2PQSEJrAvcoO0JkkYj61ipbtBD-9bqlP7sf4bTSLFS-3_v-eS17Ly3J4SB7s4jxily1-GxLqr3zNznETXQ35ORu1ldELd1OJ8_PtHtDrBS6F8sI-FexhwxCyg1btJsohky8eZRjDscnVJEHdiQUKz-uz6hYJfyPyaVsKTyvYDZ684oeIsfj64PPvALq9Xkjh56QccntVBlmI5vpiOnYtSKNq5YqDO4dPqRZQ"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-label-md text-on-surface truncate font-semibold">Roti Sourdough Utuh &amp; Croissant</span>
+<span class="font-caption text-caption text-on-surface-muted">Roti dan Kue • 2 bungkus</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">volunteer_activism</span>
+<span class="font-label-md text-label-md">Pemberi</span>
+</div>
+<div class="col-span-3 flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed text-caption font-bold">H</div>
+<span class="text-on-surface truncate">Pak Hendra</span>
+</div>
+<div class="col-span-2 text-on-surface-muted font-caption text-caption">Kemarin, 19:30 WIB</div>
+<div class="col-span-1 text-right">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-caption font-semibold">Selesai</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 px-6 py-4 items-center hover:bg-surface-bright font-body-md text-body-md border-t border-outline transition-colors">
+<div class="col-span-4 flex items-center gap-3">
+<div class="w-11 h-11 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Fresh box of assorted organic hydroponic vegetables including romaine lettuce, kale, and crisp cucumbers on a slate kitchen counter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7Sxt1ATnA3DKs7VWoLG3OoqZnmr2jsI_Ggjhlcmuey9NBfJBCglH_6p7uD-wuFLBQosbqQG_I_z2OHA_iNZcx3cWvoWa6iN3a1exyPaZGc14Qzkhmldcy3iMt6FGaNX1nTbIiXBGzbQgoazXcxjSHmbzRcJzZOUIVJFI-pOHKXTN3-u85DlUraLgSQIf-DuqSxjUfO7Qk9YK3vUWA6Xgd3Jk6msMrZ5l4ZjjRPg"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-label-md text-on-surface truncate font-semibold">Paket Sayur Hidroponik Segar</span>
+<span class="font-caption text-caption text-on-surface-muted">Sayuran • 3 ikat</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-1.5 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[16px]">shopping_bag</span>
+<span class="font-label-md text-label-md">Penerima</span>
+</div>
+<div class="col-span-3 flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface text-caption font-bold">S</div>
+<span class="text-on-surface truncate">Ibu Siti Wardah</span>
+</div>
+<div class="col-span-2 text-on-surface-muted font-caption text-caption">3 Hari lalu, 11:15 WIB</div>
+<div class="col-span-1 text-right">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-caption font-semibold">Selesai</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 px-6 py-4 items-center hover:bg-surface-bright font-body-md text-body-md border-t border-outline transition-colors">
+<div class="col-span-4 flex items-center gap-3">
+<div class="w-11 h-11 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portioned steamed catering rice boxes with clean sealed lids stacked neatly on a stainless preparation table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT_S_-jASg-j-uHpmCJOHAxm2bt0UWJnAOwW_ADp1NFxJHmIbT4eBZ_Y526uvUJXqzpQS7_IjKW5e-b_A7cxrcYBkQxvJKCbHM-jjXnpmGfZRdMO1_ZuztY5JFdTOSJuGvHYfblh9rQPfmPhc0Y7jVW6cH8tdln5_chDXqnWQxj4zonITAUgCIrBKNzzylQPGVhfMBVpBKSvGxmAEHncg8tdWuzXl98DN93KDEHw"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-label-md text-on-surface truncate font-semibold">Nasi Kotak Berkah Syukuran</span>
+<span class="font-caption text-caption text-on-surface-muted">Makanan Siap Santap • 5 porsi</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">volunteer_activism</span>
+<span class="font-label-md text-label-md">Pemberi</span>
+</div>
+<div class="col-span-3 flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed text-caption font-bold">R</div>
+<span class="text-on-surface truncate">Rian Pratama</span>
+</div>
+<div class="col-span-2 text-on-surface-muted font-caption text-caption">5 Hari lalu, 20:45 WIB</div>
+<div class="col-span-1 text-right">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-caption font-semibold">Selesai</span>
+</div>
+</div>
+</div>
+
+<!-- Mobile Card View (visible on mobile < md, hidden on md+) -->
+<div class="md:hidden flex flex-col divide-y divide-outline">
+<!-- Mobile Item 1 (Click to open modal) -->
+<div class="p-4 flex flex-col gap-3 bg-badge-bg/30 cursor-pointer" onclick="openModal()">
+<div class="flex items-start gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Roti Sourdough" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqom2PQSEJrAvcoO0JkkYj61ipbtBD-9bqlP7sf4bTSLFS-3_v-eS17Ly3J4SB7s4jxily1-GxLqr3zNznETXQ35ORu1ldELd1OJ8_PtHtDrBS6F8sI-FexhwxCyg1btJsohky8eZRjDscnVJEHdiQUKz-uz6hYJfyPyaVsKTyvYDZ684oeIsfj64PPvALq9Xkjh56QccntVBlmI5vpiOnYtSKNq5YqDO4dPqRZQ"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md text-on-surface truncate font-semibold">Roti Sourdough Utuh &amp; Croissant</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-[11px] font-semibold shrink-0">Selesai</span>
+</div>
+<span class="font-caption text-caption text-on-surface-muted">Roti dan Kue • 2 bungkus</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-caption font-caption text-on-surface-variant pt-1 border-t border-outline/60">
+<span class="inline-flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[15px]">volunteer_activism</span> Peran: Pemberi
+</span>
+<span>Kemarin, 19:30 WIB</span>
+</div>
+</div>
+
+<!-- Mobile Item 2 -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-start gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Paket Sayur Hidroponik" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7Sxt1ATnA3DKs7VWoLG3OoqZnmr2jsI_Ggjhlcmuey9NBfJBCglH_6p7uD-wuFLBQosbqQG_I_z2OHA_iNZcx3cWvoWa6iN3a1exyPaZGc14Qzkhmldcy3iMt6FGaNX1nTbIiXBGzbQgoazXcxjSHmbzRcJzZOUIVJFI-pOHKXTN3-u85DlUraLgSQIf-DuqSxjUfO7Qk9YK3vUWA6Xgd3Jk6msMrZ5l4ZjjRPg"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md text-on-surface truncate font-semibold">Paket Sayur Hidroponik Segar</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-[11px] font-semibold shrink-0">Selesai</span>
+</div>
+<span class="font-caption text-caption text-on-surface-muted">Sayuran • 3 ikat</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-caption font-caption text-on-surface-variant pt-1 border-t border-outline/60">
+<span class="inline-flex items-center gap-1 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[15px]">shopping_bag</span> Peran: Penerima
+</span>
+<span>3 Hari lalu, 11:15 WIB</span>
+</div>
+</div>
+
+<!-- Mobile Item 3 -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-start gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Nasi Kotak Berkah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT_S_-jASg-j-uHpmCJOHAxm2bt0UWJnAOwW_ADp1NFxJHmIbT4eBZ_Y526uvUJXqzpQS7_IjKW5e-b_A7cxrcYBkQxvJKCbHM-jjXnpmGfZRdMO1_ZuztY5JFdTOSJuGvHYfblh9rQPfmPhc0Y7jVW6cH8tdln5_chDXqnWQxj4zonITAUgCIrBKNzzylQPGVhfMBVpBKSvGxmAEHncg8tdWuzXl98DN93KDEHw"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md text-on-surface truncate font-semibold">Nasi Kotak Berkah Syukuran</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-caption text-[11px] font-semibold shrink-0">Selesai</span>
+</div>
+<span class="font-caption text-caption text-on-surface-muted">Makanan Siap Santap • 5 porsi</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-caption font-caption text-on-surface-variant pt-1 border-t border-outline/60">
+<span class="inline-flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[15px]">volunteer_activism</span> Peran: Pemberi
+</span>
+<span>5 Hari lalu, 20:45 WIB</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Deep Forest Scrim Overlay (scrim #0A2617 at 50% opacity) -->
+<div class="fixed inset-0 z-50 bg-scrim/50 backdrop-blur-[2px] flex items-center justify-center p-4 transition-opacity" id="modal-overlay">
+<!-- Read-Only Summary Modal: 640px Max Width -->
+<div class="w-full max-w-[640px] max-h-[92vh] sm:max-h-[88vh] overflow-y-auto bg-surface rounded-[20px] p-5 sm:p-6 shadow-[0_20px_40px_rgba(10,38,23,0.18)] flex flex-col gap-5 sm:gap-6 animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-3">
+<h2 class="font-title-md text-title-md text-on-surface font-bold tracking-tight">Detail Riwayat Transaksi</h2>
+<!-- High-Contrast Accessible Selesai Badge (#E3EAE5 bg, #202923 / #3e4942 text) -->
+<span class="px-2.5 py-1 rounded-full bg-outline text-on-surface-variant font-caption text-caption font-semibold tracking-wide">
+            COMPLETED / Selesai
+          </span>
+</div>
+<!-- Close Button -->
+<button aria-label="Tutup dialog" class="w-8 h-8 rounded-full bg-background hover:bg-surface-container-low flex items-center justify-center text-on-surface-muted hover:text-on-surface transition-colors" onclick="closeModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Summary Banner Card -->
+<div class="bg-background rounded-2xl p-4 flex items-center gap-4">
+<!-- Food Thumbnail -->
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Overhead close-up shot of freshly sliced artisanal sourdough loaf beside two golden, crispy croissants resting on a natural linen cloth with muted sage and earth tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkcjyjGdIroNQFA1jwZgTFqHMf1MfDCHmAR8ZgHinNs5zFAMn-qurR_7qKwp1fh5csZUGjO-vMlmZwPSu6zWRam16yKVHw-8W8DW0IZqkdM9UVj9phyDGbWCPSWZADIu5ke8LiPNs6PNMeKMjFmTuHl26_4Li65zG4qtB-AUHOn9T7sTbOJub88nEjqnx_cm6t1HrXQntAlWA_k2_9pxTUWOP96O6RjPXolmbsAg"/>
+</div>
+<!-- Metadata -->
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption px-2 py-0.5 rounded-full bg-badge-bg text-success font-medium">Bebas Pengawet</span>
+<span class="font-caption text-caption text-on-surface-muted">• ID: #SHF-88421</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold truncate mt-0.5">Roti Sourdough Utuh &amp; Croissant</h3>
+<div class="flex items-center gap-2 mt-1 font-body-md text-body-md text-on-surface-variant">
+<span>Roti dan Kue</span>
+<span class="text-on-surface-muted">•</span>
+<span class="font-medium text-on-surface">2 bungkus</span>
+</div>
+<div class="flex items-center gap-1 mt-1 text-on-surface-muted font-caption text-caption">
+<span class="material-symbols-outlined text-[14px]">event_available</span>
+<span>Tanggal Selesai: Kemarin, 19:30 WIB</span>
+</div>
+</div>
+</div>
+<!-- Transaction Info Grid: 2 Columns -->
+<div class="flex flex-col gap-3">
+<span class="font-caption text-caption uppercase tracking-wider text-on-surface-muted font-semibold">Informasi Transaksi Arsip</span>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-surface-container-low/60 p-4 rounded-xl">
+<!-- Peran Anda -->
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted">Peran Anda</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">volunteer_activism</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Pemberi Makanan (Giver)</span>
+</div>
+</div>
+<!-- Penerima Makanan -->
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted">Penerima Makanan</span>
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Pak Hendra</span>
+<span class="px-2 py-0.5 rounded-full bg-badge-bg text-success font-caption text-caption text-[11px] font-semibold">Warga Terverifikasi</span>
+</div>
+</div>
+<!-- Waktu Pengambilan Selesai -->
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted">Waktu Pengambilan Selesai</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">schedule</span>
+<span class="font-body-md text-body-md text-on-surface">Kemarin, 19:30 WIB</span>
+</div>
+</div>
+<!-- Status Akhir -->
+<div class="flex flex-col gap-1">
+<span class="font-caption text-caption text-on-surface-muted">Status Akhir</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-success">check_circle</span>
+<span class="font-caption text-caption text-on-surface font-medium leading-tight">TAKEN / COMPLETED (Makanan telah diterima dengan baik)</span>
+</div>
+</div>
+<!-- Privasi & Keamanan notice across columns -->
+<div class="sm:col-span-2 pt-2 flex items-start gap-2 bg-surface-container-high/50 p-2.5 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-on-surface-muted mt-0.5 shrink-0">lock</span>
+<p class="font-caption text-caption text-on-surface-muted leading-relaxed">
+              Privasi &amp; Keamanan: Alamat spesifik dan kontak pribadi telah diarsipkan demi keamanan bersama.
+            </p>
+</div>
+</div>
+</div>
+<!-- Catatan Pertemuan -->
+<div class="flex flex-col gap-2">
+<span class="font-caption text-caption uppercase tracking-wider text-on-surface-muted font-semibold">Catatan Pertemuan</span>
+<div class="bg-background rounded-xl p-3.5 flex items-start gap-3">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant mt-0.5 shrink-0">chat</span>
+<p class="font-body-md text-body-md text-on-surface italic">
+            “Serah terima berlangsung tepat waktu di teras rumah. Wadah dibawa mandiri oleh penerima.”
+          </p>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-1.5 text-on-surface-muted font-caption text-caption">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Transaksi Terarsip Permanen</span>
+</div>
+<button class="px-6 py-2.5 rounded-xl font-label-md text-label-md font-semibold bg-background hover:bg-surface-container text-on-surface transition-colors shadow-xs" onclick="closeModal()" type="button">
+          Tutup
+        </button>
+</div>
+</div>
+</div>
+</div></main></div>
+<script>
+function openModal() {
+  const modal = document.getElementById('modal-overlay');
+  if (modal) modal.classList.remove('hidden');
+}
+function closeModal() {
+  const modal = document.getElementById('modal-overlay');
+  if (modal) modal.classList.add('hidden');
+}
+</script>
+<script src="./nav.js"></script>
+</body></html>

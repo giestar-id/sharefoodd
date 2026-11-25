@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><title>ShareFood - Ajukan Ambil Makanan</title><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-container":"#ffffff","on-secondary-fixed-variant":"#314d3b","surface-container":"#e6f1e7","surface-variant":"#dbe5dc","surface-container-lowest":"#ffffff","outline":"#E3EAE5","primary-pressed":"#176644","outline-variant":"#bec9c0","error-container":"#ffdad6","on-surface":"#151e18","on-secondary":"#ffffff","success":"#23865B","surface-dim":"#d3ddd3","secondary":"#486552","on-primary-fixed":"#002112","primary":"#006c45","tertiary-container":"#b65a5e","error":"#C94B45","surface":"#FFFFFF","surface-tint":"#006c46","on-secondary-fixed":"#042012","on-background":"#151e18","on-surface-muted":"#6D7A71","inverse-primary":"#7cd9a7","surface-container-high":"#e1ebe1","tertiary-fixed-dim":"#ffb3b4","tertiary-fixed":"#ffdad9","primary-container":"#23865b","on-tertiary-fixed-variant":"#7b2c32","scrim":"#0A2617","secondary-fixed":"#caead2","on-error":"#ffffff","inverse-on-surface":"#e9f3ea","on-secondary-container":"#4e6b58","surface-container-highest":"#dbe5dc","on-tertiary-fixed":"#40010a","on-primary-fixed-variant":"#005233","on-surface-variant":"#3e4942","secondary-container":"#caead2","inverse-surface":"#29332c","tertiary":"#974247","surface-bright":"#f2fcf2","on-primary":"#ffffff","on-primary-container":"#ffffff","secondary-fixed-dim":"#afceb7","primary-fixed":"#98f6c2","badge-bg":"#E8F5ED","on-tertiary":"#ffffff","on-error-container":"#93000a","primary-fixed-dim":"#7cd9a7","surface-container-low":"#ecf6ed","background":"#F8FAF8"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xs":"0.25rem",sm:"8px","space-xl":"2rem",gutter:"16px",xl:"32px","space-lg":"1.5rem",margin:"20px",md:"16px",lg:"24px","space-sm":"0.5rem",xs:"4px","space-md":"1rem"},fontFamily:{"body-md":["Montserrat"],caption:["Montserrat"],"title-md":["Montserrat"],"headline-lg":["Montserrat"],"headline-lg-mobile":["Montserrat"],"label-md":["Montserrat"]},fontSize:{"body-md":["14px",{lineHeight:"1.5",letterSpacing:"0em",fontWeight:"400"}],caption:["12px",{lineHeight:"1.35",letterSpacing:"0.01em",fontWeight:"500"}],"title-md":["18px",{lineHeight:"1.35",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["28px",{lineHeight:"1.25",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg-mobile":["24px",{lineHeight:"30px",letterSpacing:"-0.02em",fontWeight:"700"}],"label-md":["13px",{lineHeight:"1.2",letterSpacing:"0em",fontWeight:"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface border-b border-outline"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-space-md"><a href="./s1_beranda.html" class="flex items-center gap-2 sm:gap-3 cursor-pointer"><img alt="ShareFood Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDs2NXURC5bj4o9gJdN9vptL697L9tv_iL4y1YrF_RHrILxtdBiSAaOUyi59rEwuMl7i7j6Vml5K0-SrT3IDr3pr6jHFtzVynjZAHOpHDv0sBRiLyQw6DGvkUHLVjbeeWXs0uXbz63-cs3lqMQGMkcEiPCFj9a-WQvRoWodU6aKVv9wJnVTI1pZTpmCSiRLIVgxcLQPxybAM96qaMjqQcGzgvRlHR73Z888JhCW3Q"/><span class="font-title-md text-title-md text-primary tracking-tight font-bold hidden sm:inline-block">ShareFood</span></a><nav class="hidden md:flex items-center gap-space-lg h-full" data-active-classes="text-primary font-semibold border-b-2 border-primary"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors py-space-sm" data-path="beranda" href="./s1_beranda.html">Beranda</a><a aria-current="page" class="transition-colors py-space-sm text-primary font-semibold border-b-2 border-primary" data-path="lihat-makanan" href="./s2_daftar_makanan_makanan.html">Lihat Makanan</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors py-space-sm" data-path="panduan" href="./s5_panduan_keamanan_panduan.html">Panduan</a></nav><div class="flex items-center gap-2 sm:gap-space-sm"><a class="hidden sm:inline-flex items-center justify-center font-label-md text-label-md text-on-surface px-4 py-2 rounded-xl border border-outline bg-surface hover:bg-background transition-colors" data-path="masuk" href="./s6_login_login.html">Masuk</a><a class="hidden sm:inline-flex items-center justify-center font-label-md text-label-md text-on-primary-container px-4 py-2 rounded-xl bg-primary-container hover:bg-primary-pressed transition-colors" data-path="daftar" href="./s7_register_register.html">Daftar</a><a class="inline-flex items-center justify-center font-label-md text-label-md text-on-primary-container px-4 py-2 rounded-xl bg-primary-container hover:bg-primary-pressed transition-colors shadow-sm" data-path="bagikan-makanan" href="./s12_modal_bagikan_makanan_makanan_buat.html">+ Bagikan</a><a href="./s11_dashboard_ringkasan_dashboard.html" title="Dashboard Warga" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></a></div></div></header><main class="w-full pt-16 flex-1 bg-background"><div class="flex flex-col w-full relative">
+<!-- Daftar Makanan Catalog (Background Context, lightly blurred/dimmed behind modal) -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full filter blur-[1px] pointer-events-none select-none opacity-40">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg">
+<div>
+<span class="font-caption text-caption text-primary uppercase tracking-widest font-semibold">Komunitas Berbagi</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Katalog Makanan Tersedia</h1>
+<p class="font-body-md text-body-md text-on-surface-muted mt-xs">Temukan makanan surplus layak konsumsi di sekitar Jakarta Selatan</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="px-space-md py-sm rounded-xl bg-surface-container text-secondary font-label-md text-label-md flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Area Kebayoran Baru</span>
+</div>
+</div>
+</div>
+<!-- Catalog Cards Preview -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Item Active (Being Requested) -->
+<div class="bg-surface rounded-2xl p-space-md shadow-sm flex flex-col justify-between">
+<div>
+<div class="relative w-full h-44 rounded-xl overflow-hidden mb-space-sm bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Japanese chicken teriyaki bento box with steamed rice, seasoned broccoli, carrots, and sweet tamagoyaki neatly arranged in an eco-friendly cardboard container, soft warm daylight, clean food photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHloGmIqqK9zm6O-m5bneG3BbbKDh4gb-3IBvq9M_hXyS9DbnQtEpGVl120Mw_EmNEcsayWcptlmtGbncZv9fo37HpCLuaQIHuS4VTwLgZmdfMoU_YEVSeBYBzO1PJWR3awC2BHvpuFsm9_Z16zBJNtIbyrorIqXxtXQFZpsUJtzbj2pmFha44TlDaGsS-9siiPGW8zzi3N2lbaZnkN9UF35H6zMjYbXTUslROlg"/>
+<div class="absolute top-space-xs right-space-xs bg-badge-bg text-success font-caption text-caption px-space-sm py-xs rounded-full">
+              Sisa 3 Porsi
+            </div>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface">Nasi Bento Ayam Teriyaki &amp; Sayur</h3>
+<p class="font-caption text-caption text-on-surface-muted mt-xs">Budi Santoso • Area Tebet Timur</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-caption text-caption text-tertiary font-semibold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">schedule</span> Batas: Hari ini, 20:00 WIB
+          </span>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-space-md py-sm rounded-xl">Ambil</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface rounded-2xl p-space-md shadow-sm flex flex-col justify-between">
+<div>
+<div class="relative w-full h-44 rounded-xl overflow-hidden mb-space-sm bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Assorted artisanal french bakery surplus including sourdough croissants, pain au chocolat, and rustic rye bread in a craft paper basket, aesthetic warm morning coffee shop lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABhaBc0u3-R52plrZBX0zT2Dyh_1eeQJy-hiVe4S4Vf7icuUvhU0QEKrRhE5sPV3BI87oX5TLSBcElZvWXUb3FVbp9Nmqy6dvvFTczUTSRFL3lXAYam3hSe3x2wIg1njgR5QAd75Vk4p3vMifmI2VZmwi54Sx04dxSDwzKVdwGe7TJvN_g_sRG0sIzBHww30a2roVj4JTFPlmLdYaVaM29kwO0TV_gkz1YoiaUBw"/>
+<div class="absolute top-space-xs right-space-xs bg-badge-bg text-success font-caption text-caption px-space-sm py-xs rounded-full">
+              Sisa 5 Paket
+            </div>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface">Aneka Roti Artisan &amp; Pastry</h3>
+<p class="font-caption text-caption text-on-surface-muted mt-xs">Maison Bakery Kemang • Area Bangka</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-caption text-caption text-on-surface-muted flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">schedule</span> Batas: Besok, 09:00 WIB
+          </span>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-space-md py-sm rounded-xl">Ambil</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface rounded-2xl p-space-md shadow-sm flex flex-col justify-between">
+<div>
+<div class="relative w-full h-44 rounded-xl overflow-hidden mb-space-sm bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Fresh tropical fruit cut arrangement with sweet papaya, watermelon slices, and pineapple in sustainable biodegradable packaging on a clean natural wooden surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjS3O7AbU-6ex3n2cOeHDYqSNi1ONz3NGmdSuWi_hZWrcqjSwuLMaBFNrMzpv_bJMSwyMieJCyjX_wiXyFscFR1MYPq56oEArSLkgjMHekRjMjuvySnor5XgGR2kgsgbRIzwhXMWQHuh8PamE-3UN5y4aIc6NmDwBZCa98nmAe9NwLHctg5AZhgOE0SGM5DLe1Xez-n_X5s-RlLBIXgOHbS7H0aWXKPk-yf6ddlg"/>
+<div class="absolute top-space-xs right-space-xs bg-badge-bg text-success font-caption text-caption px-space-sm py-xs rounded-full">
+              Sisa 2 Box
+            </div>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface">Potongan Buah Segar Campur</h3>
+<p class="font-caption text-caption text-on-surface-muted mt-xs">Kedai Buah Segar • Area Pasar Minggu</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-caption text-caption text-tertiary font-semibold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">schedule</span> Batas: Hari ini, 21:00 WIB
+          </span>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-space-md py-sm rounded-xl">Ambil</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Dark Scrim Modal Overlay (#0A2617 at 50% opacity) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-[#0A2617]/50 backdrop-blur-[2px] transition-opacity" id="modal-backdrop">
+<!-- Centered Modal Dialog (520px max-width, bg #FFFFFF, rounded-2xl, p-6, shadow-2xl) -->
+<div aria-labelledby="modal-title" aria-modal="true" class="relative w-full max-w-[520px] bg-surface rounded-[20px] p-5 sm:p-6 shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-y-auto" role="dialog">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-space-sm">
+<h2 class="font-title-md text-title-md font-semibold text-[#0A2617]" id="modal-title">Ajukan Pengambilan Makanan</h2>
+<button aria-label="Tutup Dialog" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-muted hover:text-on-surface hover:bg-surface-container transition-colors" id="close-modal-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Food Summary Banner (4:3 thumbnail, title, giver, deadline) -->
+<div class="rounded-xl bg-[#F8FAF8] p-3 flex items-center gap-3 my-4">
+<div class="w-16 h-12 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up shot of Japanese chicken teriyaki bento with white rice, green vegetable garnish in an organic takeaway meal box" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7qpqRZzPgkztLOs2PmAKrxmWrgwh8TrgPH0lASw0U48A3eLcXZ9wW4ryWDeVxU7ynLjXpw3EYPzUydMq6RFCuftdkp101AJKNW21Jj4yy9ti_bpqy9jU4tAJwOBfYmjG4Yoia4EsYHF5jW-WvhWBL7214hXIaPQBvMzC-owma9N6anZhQYtWk49kcTJhHP8soMsa5dUk2J1spzHUiC67VHDmdmrMyoo9Fbyamzg"/>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface truncate">Nasi Bento Ayam Teriyaki &amp; Sayur</h4>
+<div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+<span class="font-caption text-caption text-on-surface-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span> Budi Santoso
+            </span>
+<span class="text-on-surface-muted text-[10px]">•</span>
+<span class="font-caption text-caption text-tertiary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span> Batas: Hari ini, 20:00 WIB
+            </span>
+</div>
+</div>
+</div>
+<!-- Modal Interactive Form -->
+<form class="flex flex-col gap-space-md" id="claim-form" onsubmit="event.preventDefault(); submitClaim();">
+<!-- Field 1: Textarea Pesan untuk Pemberi -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface flex items-center justify-between" for="pickup-message">
+<span>Pesan untuk Pemberi</span>
+<span class="font-caption text-caption text-on-surface-muted font-normal">Wajib diisi</span>
+</label>
+<textarea class="w-full bg-[#F8FAF8] rounded-xl px-3.5 py-2.5 font-body-md text-body-md text-on-surface placeholder:text-on-surface-muted focus:outline-none focus:bg-surface focus:shadow-[0_0_0_2px_#23865B] transition-all resize-none" id="pickup-message" name="message" placeholder="Contoh: Halo Budi, saya ingin mengambil 2 porsi untuk konsumsi bersama rekan kerja sore ini..." required="" rows="3"></textarea>
+</div>
+<!-- Field 2: Usulan Jam Ambil -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface" for="pickup-time">Usulan Jam Ambil</label>
+<div class="relative flex items-center">
+<input class="w-full bg-[#F8FAF8] rounded-xl px-3.5 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface focus:shadow-[0_0_0_2px_#23865B] transition-all pl-10" id="pickup-time" name="time" type="text" value="18:30 WIB"/>
+<span class="material-symbols-outlined text-[20px] text-on-surface-muted absolute left-3 pointer-events-none">alarm</span>
+</div>
+<p class="font-caption text-caption text-on-surface-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary">info</span>
+            Pastikan jam ambil sebelum batas waktu berakhir (20:00 WIB).
+          </p>
+</div>
+<!-- Field 3: Helper & Safety Link Box -->
+<div class="rounded-xl bg-surface-container-low p-3.5 flex items-start gap-2.5 text-secondary">
+<span class="material-symbols-outlined text-[20px] text-success shrink-0 mt-0.5">verified_user</span>
+<div class="font-caption text-caption text-on-secondary-container leading-relaxed">
+            Pengambilan dilakukan secara mandiri di lokasi pemberi. Alamat lengkap dan nomor WhatsApp akan dibuka setelah permintaan ini disetujui. 
+            <a class="text-primary font-semibold hover:underline inline-flex items-center gap-0.5 ml-0.5" data-path="panduan-keamanan" href="#">
+              Baca Panduan Keamanan
+              <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Notification Banner (Dynamic feedback state) -->
+<div class="hidden rounded-xl bg-badge-bg p-3 items-center gap-2 text-success font-caption text-caption" id="success-banner">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Permintaan terkirim! Menghubungkan ke obrolan pemberi...</span>
+</div>
+<!-- Modal Footer Actions -->
+<div class="mt-2 pt-4 flex items-center justify-end gap-3">
+<button class="bg-surface hover:bg-background text-[#202923] font-label-md text-label-md px-5 py-2.5 rounded-xl transition-colors" id="cancel-btn" type="button">
+            Batal
+          </button>
+<button class="bg-[#23865B] hover:bg-primary-pressed text-[#FFFFFF] font-label-md text-label-md font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2" id="submit-btn" type="submit">
+<span>Kirim Permintaan</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    (function initModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      const closeBtn = document.getElementById('close-modal-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const submitBtn = document.getElementById('submit-btn');
+      const banner = document.getElementById('success-banner');
+      const form = document.getElementById('claim-form');
+
+      function closeModal() {
+        backdrop.style.opacity = '0';
+        setTimeout(() => {
+          backdrop.classList.add('hidden');
+        }, 200);
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeModal();
+      });
+
+      window.submitClaim = function() {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-70');
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Mengirim...';
+        
+        setTimeout(() => {
+          banner.classList.remove('hidden');
+          banner.classList.add('flex');
+          setTimeout(() => {
+            closeModal();
+          }, 1400);
+        }, 600);
+      };
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface border-t border-outline py-space-xl mt-auto"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex flex-col md:flex-row items-center justify-between gap-space-md pb-space-lg border-b border-outline"><div class="flex items-center gap-space-sm"><img alt="ShareFood Brand Logo" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDs2NXURC5bj4o9gJdN9vptL697L9tv_iL4y1YrF_RHrILxtdBiSAaOUyi59rEwuMl7i7j6Vml5K0-SrT3IDr3pr6jHFtzVynjZAHOpHDv0sBRiLyQw6DGvkUHLVjbeeWXs0uXbz63-cs3lqMQGMkcEiPCFj9a-WQvRoWodU6aKVv9wJnVTI1pZTpmCSiRLIVgxcLQPxybAM96qaMjqQcGzgvRlHR73Z888JhCW3Q"/><span class="font-title-md text-title-md text-primary font-bold">ShareFood</span></div><div class="flex flex-wrap items-center gap-space-lg text-center"><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="panduan-keamanan" href="./s5_panduan_keamanan_panduan.html">Panduan Keamanan</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="panduan" href="./s5_panduan_keamanan_panduan.html">Cara Kerja</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="ketentuan-komunitas" href="./s5_panduan_keamanan_panduan.html">Ketentuan Komunitas</a></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm text-center md:text-left"><p class="font-caption text-caption text-on-surface-muted">Bagikan kelebihan, kurangi pemborosan. Platform penghubung makanan surplus komunitas.</p><p class="font-caption text-caption text-on-surface-muted">© 2024 ShareFood Indonesia. Hak Cipta Dilindungi.</p></div></div></footer><script src="./nav.js"></script>
+</body></html>

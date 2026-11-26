@@ -7,33 +7,42 @@ import { useApp } from '@/context/AppContext';
 
 export default function DaftarPage() {
   const router = useRouter();
-  const { login } = useApp();
+  const { register } = useApp();
 
   const [nama, setNama] = useState('');
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDaftar = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg(null);
     if (!nama || !email || !password) {
-      alert('Harap lengkapi semua kolom pendaftaran.');
+      setErrorMsg('Harap lengkapi semua kolom pendaftaran.');
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMsg('Kata sandi minimal 6 karakter.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const success = await login(email.trim());
-      if (success) {
-        alert('Pendaftaran berhasil! Mengarahkan ke pemilihan role...');
+      const res = await register({
+        name: nama.trim(),
+        email: email.trim(),
+        phone: whatsapp.trim(),
+        password,
+      });
+      if (res.ok) {
         router.push('/role-select');
       } else {
-        alert('Pendaftaran berhasil! Silakan masuk.');
-        router.push('/login');
+        setErrorMsg(res.error || 'Gagal mendaftar akun.');
       }
     } catch (err: any) {
-      alert('Gagal mendaftar: ' + err.message);
+      setErrorMsg('Gagal mendaftar: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -249,6 +258,22 @@ export default function DaftarPage() {
                 required
               />
             </div>
+
+            {errorMsg && (
+              <div
+                style={{
+                  backgroundColor: '#FFEBEE',
+                  color: '#C62828',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '6px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '1rem',
+                }}
+              >
+                {errorMsg}
+              </div>
+            )}
 
             <button type="submit" disabled={isSubmitting} className="btn btn-green">
               {isSubmitting ? 'Mendaftarkan...' : 'Daftar Akun'}

@@ -65,6 +65,35 @@ export function extractCoordsFromText(text: string): Coordinates | null {
 }
 
 /**
+ * Geocode a plain text address/landmark via OpenStreetMap Nominatim (free, no API key).
+ */
+export async function geocodeAddress(query: string): Promise<Coordinates | null> {
+  if (!query || query.trim().length < 3) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=id&q=${encodeURIComponent(query.trim())}`,
+      {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'ShareFood-App/1.0' },
+      }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data[0]?.lat && data[0]?.lon) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * Server-side resolver for Google Maps URLs including short links like
  * https://share.google/... or https://maps.app.goo.gl/...
  */

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../src/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -48,6 +49,8 @@ async function main() {
     },
   ];
 
+  const defaultPasswordHash = hashPassword('rahasia123');
+
   for (const user of demoUsers) {
     await prisma.user.upsert({
       where: { id: user.id },
@@ -56,6 +59,22 @@ async function main() {
         ...user,
         sharedCount: 0,
         receivedCount: 0,
+      },
+    });
+
+    await prisma.account.upsert({
+      where: {
+        providerId_accountId: {
+          providerId: 'credentials',
+          accountId: user.email,
+        },
+      },
+      update: { password: defaultPasswordHash },
+      create: {
+        userId: user.id,
+        providerId: 'credentials',
+        accountId: user.email,
+        password: defaultPasswordHash,
       },
     });
   }

@@ -9,27 +9,29 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useApp();
 
-  const [email, setEmail] = useState('budi.santoso@email.com');
-  const [password, setPassword] = useState('rahasia123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      alert('Silakan masukkan email');
+    setErrorMsg(null);
+    if (!email || !password) {
+      setErrorMsg('Silakan masukkan email dan kata sandi.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const success = await login(email.trim());
-      if (success) {
+      const res = await login(email.trim(), password);
+      if (res.ok) {
         router.push('/role-select');
       } else {
-        alert('Email belum terdaftar! Silakan daftar akun terlebih dahulu.');
+        setErrorMsg(res.error || 'Email atau kata sandi salah.');
       }
     } catch (err: any) {
-      alert('Terjadi kesalahan saat masuk: ' + err.message);
+      setErrorMsg('Terjadi kesalahan saat masuk: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -219,70 +221,26 @@ export default function LoginPage() {
               />
             </div>
 
+            {errorMsg && (
+              <div
+                style={{
+                  backgroundColor: '#FFEBEE',
+                  color: '#C62828',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '6px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '1rem',
+                }}
+              >
+                {errorMsg}
+              </div>
+            )}
+
             <button type="submit" disabled={isSubmitting} className="btn btn-green">
               {isSubmitting ? 'Memproses...' : 'Masuk'}
             </button>
           </form>
-
-          {/* Akun Demo Cepat */}
-          <div style={{ marginTop: '1rem', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('hendra@bakery.com');
-                setPassword('rahasia123');
-              }}
-              style={{
-                flex: '1 1 100px',
-                padding: '5px 8px',
-                fontSize: '0.75rem',
-                border: '1px solid #E8E2D5',
-                borderRadius: '4px',
-                background: '#FFF3E0',
-                color: '#E65100',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Demo: Hendra (Pemilik Croissant)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('budi.santoso@email.com');
-                setPassword('rahasia123');
-              }}
-              style={{
-                flex: '1 1 90px',
-                padding: '5px 8px',
-                fontSize: '0.75rem',
-                border: '1px solid #E8E2D5',
-                borderRadius: '4px',
-                background: '#F9F5EC',
-                cursor: 'pointer',
-              }}
-            >
-              Demo: Budi (Toko)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('siti.rahma@email.com');
-                setPassword('rahasia123');
-              }}
-              style={{
-                flex: '1 1 90px',
-                padding: '5px 8px',
-                fontSize: '0.75rem',
-                border: '1px solid #E8E2D5',
-                borderRadius: '4px',
-                background: '#F9F5EC',
-                cursor: 'pointer',
-              }}
-            >
-              Demo: Siti (Pengambil)
-            </button>
-          </div>
 
           <div className="auth-footer">
             Belum punya akun? <Link href="/daftar">Daftar di sini</Link>

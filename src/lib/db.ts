@@ -1,6 +1,12 @@
 import { prisma } from './prisma';
 import { FoodItem, PickupRequest, ActivityLog, User } from '@/types';
-import { resolveMapsCoordinates } from './geo';
+import { resolveMapsCoordinates, geocodeAddress } from './geo';
+import {
+  hashPassword,
+  verifyPassword,
+  generateSessionToken,
+  SESSION_TTL_MS,
+} from './auth';
 
 // Data Mappers from Prisma relational models to frontend types
 function mapFood(f: any): FoodItem {
@@ -138,8 +144,8 @@ function mapActivity(a: any): ActivityLog {
 }
 
 // Queries using Prisma ORM with eager relation loading
-export async function getAllData(preferredUserId?: string) {
-  const [foodsRaw, requestsRaw, usersRaw, activitiesRaw, activeSetting] = await Promise.all([
+export async function getAllData(sessionUserId: string | null = null) {
+  const [foodsRaw, requestsRaw, usersRaw, activitiesRaw] = await Promise.all([
     prisma.food.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -150,7 +156,6 @@ export async function getAllData(preferredUserId?: string) {
     prisma.pickupRequest.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.user.findMany(),
     prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }),
-    prisma.appSetting.findUnique({ where: { key: 'active_user_id' } }),
   ]);
 
   const foods = foodsRaw.map(mapFood);
@@ -158,8 +163,7 @@ export async function getAllData(preferredUserId?: string) {
   const users = usersRaw.map(mapUser);
   const activities = activitiesRaw.map(mapActivity);
 
-  const targetUserId = preferredUserId || activeSetting?.value || null;
-  const currentUser = targetUserId ? users.find((u) => u.id === targetUserId) || null : null;
+  const currentUser = sessionUserId ? users.find((u) => u.id === sessionUserId) || null : null;
 
   return {
     user: currentUser,
@@ -168,6 +172,114 @@ export async function getAllData(preferredUserId?: string) {
     requests,
     activities,
   };
+}
+
+// REAL AUTH: Register User + Credentials Account + Session
+export async function registerUserDb(input: {
+  name: string;
+  email: string;
+  phone?: string;
+  password: string;
+}): Promise<{ user: User; sessionToken: string } | { error: string }> {
+  const email = input.email.toLowerCase().trim();
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    return { error: 'Email sudah terdaftar! Silakan masuk menggunakan akun Anda.' };
+  }
+
+  const passwordHash = hashPassword(input.password);
+  const sessionToken = generateSessionToken();
+  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  const userId = `user-${Date.now()}`;
+
+  const createdUser = await prisma.$transaction(async (tx) => {
+    const u = await tx.user.create({
+      data: {
+        id: userId,
+        name: input.name.trim(),
+        email,
+        phone: input.phone || '',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=250',
+        roleBadge: 'Warga Terverifikasi',
+        joinedDate: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
+        sharedCount: 0,
+        receivedCount: 0,
+      },
+    });
+
+    await tx.account.create({
+      data: {
+        userId: u.id,
+        providerId: 'credentials',
+        accountId: email,
+        password: passwordHash,
+      },
+    });
+
+    await tx.session.create({
+      data: {
+        userId: u.id,
+        token: sessionToken,
+        expiresAt,
+      },
+    });
+
+    return u;
+  });
+
+  return { user: mapUser(createdUser), sessionToken };
+}
+
+// REAL AUTH: Login with Email & Password Verification + Session
+export async function authenticateUserDb(
+  emailRaw: string,
+  password: string
+): Promise<{ user: User; sessionToken: string } | { error: string }> {
+  const email = emailRaw.toLowerCase().trim();
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { accounts: true },
+  });
+
+  if (!user) {
+    return { error: 'Email belum terdaftar! Silakan daftar akun terlebih dahulu.' };
+  }
+
+  const credAccount = user.accounts.find((a) => a.providerId === 'credentials');
+  if (!credAccount || !credAccount.password || !verifyPassword(password, credAccount.password)) {
+    return { error: 'Kata sandi salah! Silakan periksa kembali.' };
+  }
+
+  const sessionToken = generateSessionToken();
+  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+
+  await prisma.session.create({
+    data: {
+      userId: user.id,
+      token: sessionToken,
+      expiresAt,
+    },
+  });
+
+  return { user: mapUser(user), sessionToken };
+}
+
+export async function getUserBySessionTokenDb(token: string): Promise<User | null> {
+  const session = await prisma.session.findUnique({
+    where: { token },
+    include: { user: true },
+  });
+  if (!session || session.expiresAt < new Date()) {
+    if (session) {
+      await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
+    }
+    return null;
+  }
+  return mapUser(session.user);
+}
+
+export async function deleteSessionDb(token: string) {
+  await prisma.session.deleteMany({ where: { token } });
 }
 
 export async function getFoodById(id: string): Promise<FoodItem | null> {
@@ -275,6 +387,18 @@ export async function createFoodDb(food: any): Promise<FoodItem> {
     if (coords) {
       resolvedLat = coords.lat;
       resolvedLng = coords.lng;
+    }
+  }
+
+  // Fallback: geocode patokan / areaLabel if Maps short-link did not expose raw coordinates
+  if (resolvedLat === null || resolvedLng === null) {
+    const fallbackQuery = food.addressNote || food.pickupDetails?.landmark || food.areaLabel || '';
+    if (fallbackQuery) {
+      const geo = await geocodeAddress(fallbackQuery);
+      if (geo) {
+        resolvedLat = geo.lat;
+        resolvedLng = geo.lng;
+      }
     }
   }
 

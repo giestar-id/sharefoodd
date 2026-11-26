@@ -37,6 +37,9 @@ function PostMakananContent() {
   const [portion, setPortion] = useState<number>(1);
   const [pickupDeadline, setPickupDeadline] = useState('20:00');
   const [mapsUrl, setMapsUrl] = useState('');
+  const [foodLat, setFoodLat] = useState<number | null>(null);
+  const [foodLng, setFoodLng] = useState<number | null>(null);
+  const [isGettingGps, setIsGettingGps] = useState(false);
   const [addressNote, setAddressNote] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState(user?.phone || '081234567890');
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
@@ -88,6 +91,31 @@ function PostMakananContent() {
     }
   };
 
+  // GPS capture helper for seller
+  const handleGetSellerGps = () => {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+      showToast('Browser tidak mendukung deteksi GPS.');
+      return;
+    }
+    setIsGettingGps(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = Number(pos.coords.latitude.toFixed(6));
+        const lng = Number(pos.coords.longitude.toFixed(6));
+        setFoodLat(lat);
+        setFoodLng(lng);
+        setMapsUrl(`https://www.google.com/maps?q=${lat},${lng}`);
+        setIsGettingGps(false);
+        showToast('Koordinat GPS toko berhasil diambil!');
+      },
+      () => {
+        setIsGettingGps(false);
+        showToast('Izin lokasi ditolak. Silakan tempel link Google Maps secara manual.');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
   // Form Submit Handler
   const handleFormPost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +137,8 @@ function PostMakananContent() {
         type: tipe,
         price: tipe === 'berbayar' ? Number(price) || 0 : 0,
         mapsUrl: mapsUrl,
+        latitude: foodLat,
+        longitude: foodLng,
         qrisUrl: qrisPreview || '',
         whatsappNumber: whatsappNumber,
         addressNote: addressNote,
@@ -129,6 +159,8 @@ function PostMakananContent() {
       setPrice('');
       setPortion(1);
       setMapsUrl('');
+      setFoodLat(null);
+      setFoodLng(null);
       setAddressNote('');
       setFotoPreview(null);
       setQrisPreview(null);
@@ -843,15 +875,36 @@ function PostMakananContent() {
 
                 <div className="form-group">
                   <label htmlFor="maps_url">Link Google Maps Toko / Rumah</label>
-                  <input
-                    type="url"
-                    id="maps_url"
-                    className="form-control"
-                    placeholder="https://maps.google.com/..."
-                    value={mapsUrl}
-                    onChange={(e) => setMapsUrl(e.target.value)}
-                    required
-                  />
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <input
+                      type="url"
+                      id="maps_url"
+                      className="form-control"
+                      style={{ flex: 1, minWidth: '200px' }}
+                      placeholder="https://maps.google.com/..."
+                      value={mapsUrl}
+                      onChange={(e) => {
+                        setMapsUrl(e.target.value);
+                        setFoodLat(null);
+                        setFoodLng(null);
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGetSellerGps}
+                      disabled={isGettingGps}
+                      className="btn-act btn-complete"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {isGettingGps ? 'Mendeteksi...' : '📍 Ambil Lokasi GPS'}
+                    </button>
+                  </div>
+                  {foodLat !== null && foodLng !== null && (
+                    <small style={{ color: '#2E7D32', fontWeight: 600, display: 'block', marginTop: '4px' }}>
+                      ✓ Koordinat GPS tersimpan ({foodLat}, {foodLng})
+                    </small>
+                  )}
                 </div>
 
                 <div className="form-group">

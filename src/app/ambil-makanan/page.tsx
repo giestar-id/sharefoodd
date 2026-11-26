@@ -37,23 +37,33 @@ function AmbilMakananContent() {
 
   // Real-time Buyer Geolocation State
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<'loading' | 'granted' | 'denied'>('loading');
+
+  const requestUserLocation = () => {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+      setLocationStatus('denied');
+      return;
+    }
+    setLocationStatus('loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        setLocationStatus('granted');
+      },
+      () => {
+        // If permission denied or unavailable, keep null -> show all foods without distance filter
+        setUserLocation(null);
+        setLocationStatus('denied');
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+    );
+  };
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          });
-        },
-        () => {
-          // If permission denied or unavailable, keep null -> show all foods without distance filter
-          setUserLocation(null);
-        },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-      );
-    }
+    requestUserLocation();
   }, []);
 
   // Modal State
@@ -155,7 +165,7 @@ function AmbilMakananContent() {
       (f.addressNote && f.addressNote.toLowerCase().includes(searchGratis.toLowerCase())) ||
       f.areaLabel.toLowerCase().includes(searchGratis.toLowerCase());
     const matchesRadius =
-      radiusGratis === 'all' || !userLocation || f.distanceKm === null || f.distanceKm <= maxRadiusGratis;
+      radiusGratis === 'all' || !userLocation || (f.distanceKm !== null && f.distanceKm <= maxRadiusGratis);
     return isGratis && matchesSearch && matchesRadius;
   });
 
@@ -167,7 +177,7 @@ function AmbilMakananContent() {
       (f.addressNote && f.addressNote.toLowerCase().includes(searchBerbayar.toLowerCase())) ||
       f.areaLabel.toLowerCase().includes(searchBerbayar.toLowerCase());
     const matchesRadius =
-      radiusBerbayar === 'all' || !userLocation || f.distanceKm === null || f.distanceKm <= maxRadiusBerbayar;
+      radiusBerbayar === 'all' || !userLocation || (f.distanceKm !== null && f.distanceKm <= maxRadiusBerbayar);
     return isPaid && matchesSearch && matchesRadius;
   });
 
@@ -727,6 +737,52 @@ function AmbilMakananContent() {
 
       {/* MAIN CONTAINER */}
       <main className="container">
+        {(activeTab === 'gratis' || activeTab === 'berbayar') && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+              backgroundColor: locationStatus === 'granted' ? '#E8F5E9' : '#FFF3E0',
+              color: locationStatus === 'granted' ? '#2E7D32' : '#E65100',
+              border: `1px solid ${locationStatus === 'granted' ? '#C8E6C9' : '#FFE0B2'}`,
+              borderRadius: '6px',
+              padding: '0.5rem 0.85rem',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              marginBottom: '0.85rem',
+            }}
+          >
+            <span>
+              {locationStatus === 'granted'
+                ? '📍 Lokasi GPS aktif — makanan diurutkan otomatis dari yang terdekat'
+                : locationStatus === 'loading'
+                ? '📍 Mendeteksi lokasi Anda...'
+                : '📍 Izin lokasi belum aktif — menampilkan semua makanan tanpa filter jarak'}
+            </span>
+            {locationStatus !== 'granted' && (
+              <button
+                type="button"
+                onClick={requestUserLocation}
+                style={{
+                  backgroundColor: '#6B1D2F',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Aktifkan Lokasi
+              </button>
+            )}
+          </div>
+        )}
+
         {/* TAB 1: MAKANAN GRATIS */}
         {activeTab === 'gratis' && (
           <section id="tab-gratis" className="tab-content active">

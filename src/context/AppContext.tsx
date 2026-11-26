@@ -14,7 +14,8 @@ interface AppContextType {
   requests: PickupRequest[];
   activities: ActivityLog[];
   isLoaded: boolean;
-  login: (email: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  register: (data: { name: string; email: string; phone?: string; password: string }) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   createFood: (foodData: Partial<FoodItem>) => Promise<FoodItem>;
@@ -59,21 +60,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActiveRole(newRole);
   };
 
-  // Fetch live records directly from SQLite via Prisma ORM API
+  // Fetch live records directly from PostgreSQL via Prisma ORM API (authenticated via HTTP-only session cookie)
   const refreshFromDb = useCallback(async () => {
     try {
-      const tabUserId =
-        typeof window !== 'undefined' ? sessionStorage.getItem('sharefood_user_id') : null;
-      const url = tabUserId
-        ? `/api/data?userId=${encodeURIComponent(tabUserId)}`
-        : '/api/data';
-      const res = await fetch(url, { cache: 'no-store' });
+      const res = await fetch('/api/data', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setUser(data.user || null);
-        if (data.user && typeof window !== 'undefined' && !tabUserId) {
-          sessionStorage.setItem('sharefood_user_id', data.user.id);
-        }
         setFoods(Array.isArray(data.foods) ? data.foods : []);
         setRequests(Array.isArray(data.requests) ? data.requests : []);
         setActivities(Array.isArray(data.activities) ? data.activities : []);
@@ -94,37 +87,55 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('focus', handleFocus);
   }, [refreshFromDb]);
 
-  // LOGIN via Prisma ORM
-  const login = async (email: string): Promise<boolean> => {
+  // REAL LOGIN via Prisma ORM + HTTP-only Session Cookie
+  const login = async (email: string, password: string): Promise<{ ok: boolean; error?: string }> => {
     try {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.user) {
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('sharefood_user_id', data.user.id);
-          }
-          setUser(data.user);
-          await refreshFromDb();
-          return true;
-        }
+      const data = await res.json();
+      if (res.ok && data.user) {
+        setUser(data.user);
+        await refreshFromDb();
+        return { ok: true };
       }
-      return false;
-    } catch (e) {
+      return { ok: false, error: data.error || 'Email atau kata sandi salah.' };
+    } catch (e: any) {
       console.error('Login error:', e);
-      return false;
+      return { ok: false, error: e?.message || 'Gagal menghubungi server.' };
     }
   };
 
-  // LOGOUT via Prisma ORM
-  const logout = async () => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('sharefood_user_id');
+  // REAL REGISTER via Prisma ORM + HTTP-only Session Cookie
+  const register = async (payload: {
+    name: string;
+    email: string;
+    phone?: string;
+    password: string;
+  }): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok && data.user) {
+        setUser(data.user);
+        await refreshFromDb();
+        return { ok: true };
+      }
+      return { ok: false, error: data.error || 'Gagal mendaftar akun.' };
+    } catch (e: any) {
+      console.error('Register error:', e);
+      return { ok: false, error: e?.message || 'Gagal menghubungi server.' };
     }
+  };
+
+  // LOGOUT via Prisma ORM (Deletes DB Session + Clears Cookie)
+  const logout = async () => {
     setUser(null);
     try {
       await fetch('/api/auth', { method: 'DELETE' });
@@ -523,6 +534,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         activities,
         isLoaded,
         login,
+        register,
         logout,
         updateProfile,
         createFood,

@@ -103,7 +103,7 @@ export default function DashboardHeader({
                 <button
                   type="button"
                   onClick={() => {
-                    login('budi.santoso@email.com');
+                    login('budi.santoso@email.com', 'rahasia123');
                     setDropdownOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-4 py-1.5 text-xs text-left cursor-pointer hover:bg-[#F9F5EC] ${
@@ -120,7 +120,7 @@ export default function DashboardHeader({
                 <button
                   type="button"
                   onClick={() => {
-                    login('siti.rahma@email.com');
+                    login('siti.rahma@email.com', 'rahasia123');
                     setDropdownOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-4 py-1.5 text-xs text-left cursor-pointer hover:bg-[#F9F5EC] ${

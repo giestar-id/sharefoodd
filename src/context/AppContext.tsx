@@ -292,36 +292,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       minute: '2-digit',
     }).replace('.', ':')} WIB`;
 
-    const targetFood = foods.find((f) => f.id === targetReq.foodId);
-    const isLastPortion = (targetFood?.quantity ?? 1) <= 1;
-
     setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === requestId) {
-          return {
-            ...r,
-            status: 'APPROVED',
-            respondedAt: nowFormatted,
-          };
-        }
-        if (isLastPortion && r.foodId === targetReq.foodId && r.status === 'PENDING') {
-          return {
-            ...r,
-            status: 'DECLINED',
-            respondedAt: nowFormatted,
-          };
-        }
-        return r;
-      })
+      prev.map((r) =>
+        r.id === requestId
+          ? {
+              ...r,
+              status: 'APPROVED',
+              respondedAt: nowFormatted,
+            }
+          : r
+      )
     );
-
-    if (isLastPortion) {
-      setFoods((prev) =>
-        prev.map((f) =>
-          f.id === targetReq.foodId ? { ...f, status: 'RESERVED' } : f
-        )
-      );
-    }
 
     setActivities((prev) => [
       {
@@ -394,7 +375,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // MARK AS TAKEN via Prisma ORM (Atomic Transaction)
+  // MARK AS TAKEN via Prisma ORM (Atomic Transaction — keeps food active until seller sets stock to 0)
   const markAsTaken = async (foodId: string, requestId?: string) => {
     const matchingApproved = requests.filter(
       (r) =>
@@ -402,19 +383,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         r.status === 'APPROVED' &&
         (!requestId || r.id === requestId)
     ).length;
-    const decrementBy = Math.max(1, matchingApproved);
-
-    setFoods((prev) =>
-      prev.map((f) => {
-        if (f.id !== foodId) return f;
-        const newQty = Math.max(0, (f.quantity || 1) - decrementBy);
-        return {
-          ...f,
-          quantity: newQty,
-          status: newQty <= 0 ? 'TAKEN' : 'AVAILABLE',
-        };
-      })
-    );
+    const completedCount = Math.max(1, matchingApproved);
 
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
       day: '2-digit',
@@ -437,7 +406,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (user) {
       setUser({
         ...user,
-        sharedCount: (user.sharedCount || 0) + decrementBy,
+        sharedCount: (user.sharedCount || 0) + completedCount,
       });
     }
 

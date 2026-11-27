@@ -644,33 +644,14 @@ export async function approveRequestDb(requestId: string) {
     const targetReq = await tx.pickupRequest.findUnique({ where: { id: requestId } });
     if (!targetReq) return false;
 
-    const food = await tx.food.findUnique({ where: { id: targetReq.foodId } });
-
-    // 1. Approve target request
+    // 1. Approve target request (stock/visibility is managed manually by the seller via Edit Menu)
     const nowFormatted = formatWaktuId();
     await tx.pickupRequest.update({
       where: { id: requestId },
       data: { status: 'APPROVED', respondedAt: nowFormatted, activeFlag: 1 },
     });
 
-    // 2. Only reserve food & auto-decline other requests if this was the last portion (quantity <= 1)
-    if (food && food.quantity <= 1) {
-      await tx.pickupRequest.updateMany({
-        where: {
-          foodId: targetReq.foodId,
-          id: { not: requestId },
-          status: 'PENDING',
-        },
-        data: { status: 'DECLINED', respondedAt: nowFormatted, activeFlag: null },
-      });
-
-      await tx.food.update({
-        where: { id: targetReq.foodId },
-        data: { status: 'RESERVED' },
-      });
-    }
-
-    // 4. Log activity
+    // 2. Log activity
     await tx.activity.create({
       data: {
         id: `act-${Date.now()}`,
@@ -726,17 +707,7 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
       ? await tx.pickupRequest.findMany({ where: { id: requestId, foodId, status: 'APPROVED' } })
       : await tx.pickupRequest.findMany({ where: { foodId, status: 'APPROVED' } });
 
-    const decrementBy = Math.max(1, targetRequests.length);
-    const currentQty = food?.quantity ?? 1;
-    const newQty = Math.max(0, currentQty - decrementBy);
-
-    await tx.food.update({
-      where: { id: foodId },
-      data: {
-        quantity: newQty,
-        status: newQty <= 0 ? 'TAKEN' : 'AVAILABLE',
-      },
-    });
+    const completedCount = Math.max(1, targetRequests.length);
 
     if (requestId) {
       await tx.pickupRequest.updateMany({
@@ -753,7 +724,7 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
     if (food?.userId) {
       await tx.user.update({
         where: { id: food.userId },
-        data: { sharedCount: { increment: decrementBy } },
+        data: { sharedCount: { increment: completedCount } },
       });
     }
 

@@ -877,7 +877,21 @@ function AmbilMakananContent() {
               </div>
             </div>
 
-            {gratisFoods.length === 0 ? (
+            {!isLoaded && foods.length === 0 ? (
+              <div className="food-grid">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="food-card" style={{ opacity: 0.7 }}>
+                    <div style={{ height: '160px', background: '#EDE7DB' }} />
+                    <div className="food-body" style={{ gap: '0.6rem' }}>
+                      <div style={{ height: '14px', width: '55%', background: '#EDE7DB', borderRadius: '4px' }} />
+                      <div style={{ height: '18px', width: '80%', background: '#E5DEC9', borderRadius: '4px' }} />
+                      <div style={{ height: '12px', width: '70%', background: '#EDE7DB', borderRadius: '4px' }} />
+                      <div style={{ height: '38px', width: '100%', background: '#E5DEC9', borderRadius: '6px', marginTop: '0.5rem' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : gratisFoods.length === 0 ? (
               <div id="empty-gratis" className="empty-state">
                 <div className="empty-icon">🍃</div>
                 <h3>Belum Ada Makanan Gratis</h3>
@@ -964,7 +978,21 @@ function AmbilMakananContent() {
               </div>
             </div>
 
-            {berbayarFoods.length === 0 ? (
+            {!isLoaded && foods.length === 0 ? (
+              <div className="food-grid">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="food-card" style={{ opacity: 0.7 }}>
+                    <div style={{ height: '160px', background: '#EDE7DB' }} />
+                    <div className="food-body" style={{ gap: '0.6rem' }}>
+                      <div style={{ height: '14px', width: '55%', background: '#EDE7DB', borderRadius: '4px' }} />
+                      <div style={{ height: '18px', width: '80%', background: '#E5DEC9', borderRadius: '4px' }} />
+                      <div style={{ height: '12px', width: '70%', background: '#EDE7DB', borderRadius: '4px' }} />
+                      <div style={{ height: '38px', width: '100%', background: '#E5DEC9', borderRadius: '6px', marginTop: '0.5rem' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : berbayarFoods.length === 0 ? (
               <div id="empty-berbayar" className="empty-state">
                 <div className="empty-icon">🏪</div>
                 <h3>Toko Tidak Ditemukan</h3>

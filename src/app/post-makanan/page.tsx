@@ -74,30 +74,56 @@ function PostMakananContent() {
     }, 3200);
   };
 
-  // Image Preview Handlers
-  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+  // Compress uploaded image on client (max 640px JPEG ~30-60KB instead of 2-5MB raw Base64)
+  const compressImageFile = (file: File, maxWidth = 640, quality = 0.72): Promise<string> =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Gagal membaca file gambar'));
       reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+        img.onload = () => {
+          const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(typeof reader.result === 'string' ? reader.result : '');
+            return;
+          }
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
         if (typeof reader.result === 'string') {
-          setFotoPreview(reader.result);
+          img.src = reader.result;
         }
       };
       reader.readAsDataURL(file);
+    });
+
+  // Image Preview Handlers
+  const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const compressed = await compressImageFile(file, 640, 0.72);
+        setFotoPreview(compressed);
+      } catch {
+        showToast('Gagal memproses foto makanan.', 'error');
+      }
     }
   };
 
-  const handleQrisChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQrisChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setQrisPreview(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImageFile(file, 600, 0.78);
+        setQrisPreview(compressed);
+      } catch {
+        showToast('Gagal memproses gambar QRIS.', 'error');
+      }
     }
   };
 

@@ -165,24 +165,72 @@ function mapActivity(a: any): ActivityLog {
 }
 
 // Queries using Prisma ORM with parallel single-round-trip loading
+// Offloads Base64 data:image/* blobs to /api/media/[type]/[id] directly in PostgreSQL
+// so /api/data stays tiny (<10KB) instead of transferring multi-MB Base64 strings.
 export async function getAllDataByToken(sessionToken: string | null = null) {
-  const [sessionRaw, foodsRaw, requestsRaw, activitiesRaw] = await Promise.all([
+  const [sessionRaw, foodsRaw, imagesRaw, pickupDetailsRaw, requestsRaw, activitiesRaw] = await Promise.all([
     sessionToken
       ? prisma.session.findUnique({
           where: { token: sessionToken },
           include: { user: true },
         })
       : Promise.resolve(null),
-    prisma.food.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
-        images: { orderBy: { sortOrder: 'asc' } },
-        pickupDetail: true,
-      },
-    }),
-    prisma.pickupRequest.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.$queryRaw<any[]>`
+      SELECT
+        id, "userId", "ownerName", title, category, description, quantity, unit,
+        "preparedAt", "pickupDeadline", "areaLabel",
+        CASE
+          WHEN "storageNotes" LIKE '%data:image/%'
+          THEN regexp_replace("storageNotes", '"qrisUrl":"data:image/[^"]*"', '"qrisUrl":"/api/media/qris/' || id || '"')
+          ELSE "storageNotes"
+        END AS "storageNotes",
+        allergens, status, "deletedAt", "requestCount", "createdAt", "updatedAt"
+      FROM "Food"
+      ORDER BY "createdAt" DESC
+    `,
+    prisma.$queryRaw<any[]>`
+      SELECT
+        id, "foodId", "sortOrder",
+        CASE
+          WHEN path LIKE 'data:image/%' THEN '/api/media/food/' || "foodId"
+          ELSE path
+        END AS path
+      FROM "FoodImage"
+      ORDER BY "sortOrder" ASC
+    `,
+    prisma.pickupDetail.findMany(),
+    prisma.$queryRaw<any[]>`
+      SELECT
+        id, "foodId", "foodTitle",
+        CASE
+          WHEN "foodImage" LIKE 'data:image/%' THEN '/api/media/food/' || "foodId"
+          ELSE "foodImage"
+        END AS "foodImage",
+        "foodCategory", "requesterId", "requesterName", "requesterPhone",
+        "requesterAvatar", "requesterStats", message, "proposedPickupTime",
+        status, "respondedAt", "activeFlag", "createdAt", "updatedAt"
+      FROM "PickupRequest"
+      ORDER BY "createdAt" DESC
+    `,
     prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }),
   ]);
+
+  const imagesByFood = new Map<string, any[]>();
+  for (const img of imagesRaw) {
+    const arr = imagesByFood.get(img.foodId) || [];
+    arr.push(img);
+    imagesByFood.set(img.foodId, arr);
+  }
+  const detailByFood = new Map<string, any>();
+  for (const d of pickupDetailsRaw) {
+    detailByFood.set(d.foodId, d);
+  }
+
+  const foodsJoined = foodsRaw.map((f) => ({
+    ...f,
+    images: imagesByFood.get(f.id) || [],
+    pickupDetail: detailByFood.get(f.id) || null,
+  }));
 
   let currentUser: User | null = null;
   if (sessionRaw) {
@@ -195,7 +243,7 @@ export async function getAllDataByToken(sessionToken: string | null = null) {
 
   return {
     user: currentUser,
-    foods: foodsRaw.map(mapFood),
+    foods: foodsJoined.map(mapFood),
     requests: requestsRaw.map(mapRequest),
     activities: activitiesRaw.map(mapActivity),
   };

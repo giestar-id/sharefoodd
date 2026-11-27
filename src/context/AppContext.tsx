@@ -62,6 +62,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActiveRole(newRole);
   };
 
+  // Hydrate instant cached state from sessionStorage (stale-while-revalidate)
+  useEffect(() => {
+    try {
+      const cachedRaw = sessionStorage.getItem('sharefood_cache_v1');
+      if (cachedRaw) {
+        const cached = JSON.parse(cachedRaw);
+        if (cached && typeof cached === 'object') {
+          if (cached.user) setUser(cached.user);
+          if (Array.isArray(cached.foods)) setFoods(cached.foods);
+          if (Array.isArray(cached.requests)) setRequests(cached.requests);
+          if (Array.isArray(cached.activities)) setActivities(cached.activities);
+        }
+      }
+    } catch {}
+  }, []);
+
   // Fetch live records directly from PostgreSQL via Prisma ORM API (authenticated via HTTP-only session cookie)
   const refreshFromDb = useCallback(async (force = false) => {
     const now = Date.now();
@@ -75,10 +91,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json();
         // Skip overwriting state if a mutation happened while this fetch was in flight
         if (lastMutationAtRef.current > now) return;
-        setUser(data.user || null);
-        setFoods(Array.isArray(data.foods) ? data.foods : []);
-        setRequests(Array.isArray(data.requests) ? data.requests : []);
-        setActivities(Array.isArray(data.activities) ? data.activities : []);
+        const nextUser = data.user || null;
+        const nextFoods = Array.isArray(data.foods) ? data.foods : [];
+        const nextRequests = Array.isArray(data.requests) ? data.requests : [];
+        const nextActivities = Array.isArray(data.activities) ? data.activities : [];
+        setUser(nextUser);
+        setFoods(nextFoods);
+        setRequests(nextRequests);
+        setActivities(nextActivities);
+        try {
+          sessionStorage.setItem(
+            'sharefood_cache_v1',
+            JSON.stringify({
+              user: nextUser,
+              foods: nextFoods,
+              requests: nextRequests,
+              activities: nextActivities,
+            })
+          );
+        } catch {}
       }
     } catch (e) {
       console.error('Failed to load data from Prisma ORM:', e);

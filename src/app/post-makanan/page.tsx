@@ -96,7 +96,7 @@ function PostMakananContent() {
     }
   };
 
-  // Automatically detect seller GPS coordinates on mount & pre-fill Google Maps URL
+  // Silently detect seller GPS coordinates in background (without pre-filling the mapsUrl input)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -105,7 +105,6 @@ function PostMakananContent() {
       const lng = Number(lngRaw.toFixed(6));
       setFoodLat(lat);
       setFoodLng(lng);
-      setMapsUrl((prev) => (prev ? prev : `https://www.google.com/maps?q=${lat},${lng}`));
     };
 
     try {
@@ -145,6 +144,12 @@ function PostMakananContent() {
 
     try {
       setIsSubmitting(true);
+      const finalMapsUrl =
+        mapsUrl.trim() ||
+        (foodLat !== null && foodLng !== null
+          ? `https://www.google.com/maps?q=${foodLat},${foodLng}`
+          : '');
+
       await createFood({
         title: foodTitle,
         category: tipe === 'berbayar' ? 'berbayar' : 'makanan_berat',
@@ -155,7 +160,7 @@ function PostMakananContent() {
         description: addressNote,
         type: tipe,
         price: tipe === 'berbayar' ? Number(price) || 0 : 0,
-        mapsUrl: mapsUrl,
+        mapsUrl: finalMapsUrl,
         latitude: foodLat,
         longitude: foodLng,
         qrisUrl: qrisPreview || '',
@@ -911,7 +916,7 @@ function PostMakananContent() {
                       setFoodLat(null);
                       setFoodLng(null);
                     }}
-                    required
+                    required={foodLat === null || foodLng === null}
                   />
                 </div>
 

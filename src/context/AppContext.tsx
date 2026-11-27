@@ -329,6 +329,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!targetReq) return;
 
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -372,6 +373,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const declineRequest = async (requestId: string) => {
     lastMutationAtRef.current = Date.now();
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -419,6 +421,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const completedCount = Math.max(1, matchingApproved);
 
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -490,7 +493,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const todayWibPrefix = new Date().toLocaleDateString('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const isTargetFree = targetFood.type !== 'berbayar' && targetFood.category !== 'berbayar';
+    if (isTargetFree) {
+      const todayFreeCount = requests.filter((r) => {
+        if (r.requesterId !== requesterId) return false;
+        if (r.status !== 'PENDING' && r.status !== 'APPROVED' && r.status !== 'COMPLETED') return false;
+        if (!r.createdAt || !r.createdAt.includes(todayWibPrefix)) return false;
+        const parent = foods.find((f) => f.id === r.foodId);
+        const isPaid = parent
+          ? parent.type === 'berbayar' || parent.category === 'berbayar'
+          : r.foodCategory === 'berbayar';
+        return !isPaid;
+      }).length;
+
+      if (todayFreeCount >= 3) {
+        throw new Error(
+          'Batas ambil makanan gratis hari ini sudah habis (maksimal 3 per hari). Anda bisa mengambil lagi besok!'
+        );
+      }
+    }
+
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
       day: '2-digit',
       month: 'short',
       year: 'numeric',

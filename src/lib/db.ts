@@ -79,6 +79,7 @@ function mapFood(f: any): FoodItem {
 
 function formatWaktuId(date: Date = new Date()): string {
   const formatted = date.toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -86,6 +87,26 @@ function formatWaktuId(date: Date = new Date()): string {
     minute: '2-digit',
   });
   return `${formatted.replace('.', ':')} WIB`;
+}
+
+function getStartOfTodayWib(): Date {
+  const now = new Date();
+  const wibOffsetMs = 7 * 60 * 60 * 1000;
+  const wibNow = new Date(now.getTime() + wibOffsetMs);
+  const startOfWibDayUtcMs =
+    Date.UTC(wibNow.getUTCFullYear(), wibNow.getUTCMonth(), wibNow.getUTCDate()) - wibOffsetMs;
+  return new Date(startOfWibDayUtcMs);
+}
+
+function isFoodPaid(food: { category?: string | null; storageNotes?: string | null }): boolean {
+  if (food.category === 'berbayar') return true;
+  if (food.storageNotes && food.storageNotes.startsWith('{')) {
+    try {
+      const extra = JSON.parse(food.storageNotes);
+      if (extra?.type === 'berbayar') return true;
+    } catch {}
+  }
+  return false;
 }
 
 function mapRequest(r: any): PickupRequest {
@@ -638,13 +659,27 @@ export async function createRequestDb(req: PickupRequest) {
     throw new Error('Pengguna harus masuk terlebih dahulu untuk memesan makanan.');
   }
 
-  const [targetFood, existingReq] = await Promise.all([
-    prisma.food.findUnique({ where: { id: req.foodId }, select: { userId: true, status: true, quantity: true } }),
+  const [targetFood, existingReq, todayRequests] = await Promise.all([
+    prisma.food.findUnique({
+      where: { id: req.foodId },
+      select: { userId: true, status: true, quantity: true, category: true, storageNotes: true },
+    }),
     prisma.pickupRequest.findFirst({
       where: {
         foodId: req.foodId,
         requesterId: req.requesterId,
         status: { in: ['PENDING', 'APPROVED'] },
+      },
+    }),
+    prisma.pickupRequest.findMany({
+      where: {
+        requesterId: req.requesterId,
+        status: { in: ['PENDING', 'APPROVED', 'COMPLETED'] },
+        createdAt: { gte: getStartOfTodayWib() },
+      },
+      select: {
+        foodCategory: true,
+        food: { select: { category: true, storageNotes: true } },
       },
     }),
   ]);
@@ -661,6 +696,20 @@ export async function createRequestDb(req: PickupRequest) {
 
   if (existingReq) {
     return mapRequest(existingReq);
+  }
+
+  // Daily limit: max 3 FREE food requests per day (WIB); paid food is unlimited
+  if (!isFoodPaid(targetFood)) {
+    const todayFreeCount = todayRequests.filter((r) => {
+      if (r.food) return !isFoodPaid(r.food);
+      return r.foodCategory !== 'berbayar';
+    }).length;
+
+    if (todayFreeCount >= 3) {
+      throw new Error(
+        'Batas ambil makanan gratis hari ini sudah habis (maksimal 3 per hari). Anda bisa mengambil lagi besok!'
+      );
+    }
   }
 
   const reqId = req.id || genId('req');

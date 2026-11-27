@@ -137,6 +137,12 @@ function AmbilMakananContent() {
       return;
     }
 
+    const isFoodGratis = food.type !== 'berbayar' && food.category !== 'berbayar';
+    if (isFoodGratis && todayFreeCount >= 3) {
+      showToast('Batas ambil makanan gratis hari ini sudah habis (3/3). Anda bisa mengambil lagi besok!');
+      return;
+    }
+
     setSelectedFood(food);
     setOrderTime(food.pickupDeadline ? food.pickupDeadline.replace(/[^\d:]/g, '') || '18:00' : '18:00');
     setModalOpen(true);
@@ -222,6 +228,22 @@ function AmbilMakananContent() {
 
   // User's Requests (Notifikasi & Status vs Riwayat) — strictly matched by requesterId FK
   const myRequests = requests.filter((r) => Boolean(user?.id) && r.requesterId === user?.id);
+  const todayWibPrefix = new Date().toLocaleDateString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+  const todayFreeCount = myRequests.filter((r) => {
+    if (r.status !== 'PENDING' && r.status !== 'APPROVED' && r.status !== 'COMPLETED') return false;
+    if (!r.createdAt || !r.createdAt.includes(todayWibPrefix)) return false;
+    const parent = foods.find((f) => f.id === r.foodId);
+    const isPaid = parent
+      ? parent.type === 'berbayar' || parent.category === 'berbayar'
+      : r.foodCategory === 'berbayar';
+    return !isPaid;
+  }).length;
+  const isDailyFreeLimitReached = todayFreeCount >= 3;
   const notifikasiMyRequests = myRequests.filter(
     (r) => r.status === 'PENDING' || r.status === 'APPROVED' || r.status === 'DECLINED' || r.status === 'CANCELLED'
   );
@@ -841,9 +863,9 @@ function AmbilMakananContent() {
                       </div>
                       <button
                         className="btn btn-green"
-                        disabled={Boolean(user?.id) && item.userId === user?.id}
+                        disabled={(Boolean(user?.id) && item.userId === user?.id) || isDailyFreeLimitReached}
                         style={
-                          Boolean(user?.id) && item.userId === user?.id
+                          (Boolean(user?.id) && item.userId === user?.id) || isDailyFreeLimitReached
                             ? { backgroundColor: '#CCCCCC', color: '#666666', cursor: 'not-allowed' }
                             : undefined
                         }
@@ -851,6 +873,8 @@ function AmbilMakananContent() {
                       >
                         {Boolean(user?.id) && item.userId === user?.id
                           ? 'Produk Anda Sendiri'
+                          : isDailyFreeLimitReached
+                          ? 'Batas Harian (3/3) • Besok Lagi'
                           : 'Ambil Gratis'}
                       </button>
                     </div>

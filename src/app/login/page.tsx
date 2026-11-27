@@ -14,6 +14,23 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const requestLocationInBackground = () => {
+    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          try {
+            sessionStorage.setItem(
+              'sharefood_user_loc',
+              JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+            );
+          } catch {}
+        },
+        () => {},
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -21,6 +38,9 @@ export default function LoginPage() {
       setErrorMsg('Silakan masukkan email dan kata sandi.');
       return;
     }
+
+    // Trigger browser location permission prompt immediately on user gesture
+    requestLocationInBackground();
 
     try {
       setIsSubmitting(true);

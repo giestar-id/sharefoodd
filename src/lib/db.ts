@@ -192,39 +192,31 @@ export async function registerUserDb(input: {
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
   const userId = `user-${Date.now()}`;
 
-  const createdUser = await prisma.$transaction(async (tx) => {
-    const u = await tx.user.create({
-      data: {
-        id: userId,
-        name: input.name.trim(),
-        email,
-        phone: input.phone || '',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=250',
-        roleBadge: 'Warga Terverifikasi',
-        joinedDate: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
-        sharedCount: 0,
-        receivedCount: 0,
+  const createdUser = await prisma.user.create({
+    data: {
+      id: userId,
+      name: input.name.trim(),
+      email,
+      phone: input.phone || '',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=250',
+      roleBadge: 'Warga Terverifikasi',
+      joinedDate: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
+      sharedCount: 0,
+      receivedCount: 0,
+      accounts: {
+        create: {
+          providerId: 'credentials',
+          accountId: email,
+          password: passwordHash,
+        },
       },
-    });
-
-    await tx.account.create({
-      data: {
-        userId: u.id,
-        providerId: 'credentials',
-        accountId: email,
-        password: passwordHash,
+      sessions: {
+        create: {
+          token: sessionToken,
+          expiresAt,
+        },
       },
-    });
-
-    await tx.session.create({
-      data: {
-        userId: u.id,
-        token: sessionToken,
-        expiresAt,
-      },
-    });
-
-    return u;
+    },
   });
 
   return { user: mapUser(createdUser), sessionToken };

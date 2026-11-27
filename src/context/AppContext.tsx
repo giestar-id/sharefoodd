@@ -98,7 +98,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (res.ok && data.user) {
         setUser(data.user);
-        await refreshFromDb();
+        void refreshFromDb();
         return { ok: true };
       }
       return { ok: false, error: data.error || 'Email atau kata sandi salah.' };
@@ -124,7 +124,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (res.ok && data.user) {
         setUser(data.user);
-        await refreshFromDb();
+        void refreshFromDb();
         return { ok: true };
       }
       return { ok: false, error: data.error || 'Gagal mendaftar akun.' };

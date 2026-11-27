@@ -16,6 +16,23 @@ export default function DaftarPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const requestLocationInBackground = () => {
+    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          try {
+            sessionStorage.setItem(
+              'sharefood_user_loc',
+              JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+            );
+          } catch {}
+        },
+        () => {},
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+  };
+
   const handleDaftar = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -27,6 +44,9 @@ export default function DaftarPage() {
       setErrorMsg('Kata sandi minimal 6 karakter.');
       return;
     }
+
+    // Trigger browser location permission prompt immediately on user gesture
+    requestLocationInBackground();
 
     try {
       setIsSubmitting(true);

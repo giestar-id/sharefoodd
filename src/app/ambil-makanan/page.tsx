@@ -776,53 +776,6 @@ function AmbilMakananContent() {
 
       {/* MAIN CONTAINER */}
       <main className="container">
-        {(activeTab === 'gratis' || activeTab === 'berbayar') && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '0.5rem',
-              backgroundColor: locationStatus === 'granted' ? '#E8F5E9' : '#FFF3E0',
-              color: locationStatus === 'granted' ? '#2E7D32' : '#E65100',
-              border: `1px solid ${locationStatus === 'granted' ? '#C8E6C9' : '#FFE0B2'}`,
-              borderRadius: '6px',
-              padding: '0.5rem 0.85rem',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              marginBottom: '0.85rem',
-            }}
-          >
-            <span>
-              {locationStatus === 'granted'
-                ? '📍 Lokasi GPS aktif — makanan diurutkan otomatis dari yang terdekat'
-                : locationStatus === 'loading'
-                ? '📍 Mendeteksi lokasi Anda...'
-                : `📍 ${locationError || 'Izin lokasi belum aktif — menampilkan semua makanan tanpa filter jarak'}`}
-            </span>
-            {locationStatus !== 'granted' && (
-              <button
-                type="button"
-                disabled={locationStatus === 'loading'}
-                onClick={requestUserLocation}
-                style={{
-                  backgroundColor: locationStatus === 'loading' ? '#999999' : '#6B1D2F',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '4px 10px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  cursor: locationStatus === 'loading' ? 'wait' : 'pointer',
-                }}
-              >
-                {locationStatus === 'loading' ? 'Mendeteksi...' : 'Aktifkan Lokasi'}
-              </button>
-            )}
-          </div>
-        )}
-
         {/* TAB 1: MAKANAN GRATIS */}
         {activeTab === 'gratis' && (
           <section id="tab-gratis" className="tab-content active">

@@ -34,16 +34,22 @@ function PostMakananContent() {
   const [foodTitle, setFoodTitle] = useState('');
   const [tipe, setTipe] = useState<'gratis' | 'berbayar'>('gratis');
   const [price, setPrice] = useState<number | ''>('');
-  const [portion, setPortion] = useState<number>(1);
+  const [portion, setPortion] = useState<number | ''>('');
   const [pickupDeadline, setPickupDeadline] = useState('20:00');
   const [mapsUrl, setMapsUrl] = useState('');
   const [foodLat, setFoodLat] = useState<number | null>(null);
   const [foodLng, setFoodLng] = useState<number | null>(null);
   const [addressNote, setAddressNote] = useState('');
-  const [whatsappNumber, setWhatsappNumber] = useState(user?.phone || '081234567890');
+  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const [qrisPreview, setQrisPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user?.phone) {
+      setWhatsappNumber((prev) => prev || user.phone || '');
+    }
+  }, [user?.phone]);
 
   // Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -142,7 +148,7 @@ function PostMakananContent() {
       await createFood({
         title: foodTitle,
         category: tipe === 'berbayar' ? 'berbayar' : 'makanan_berat',
-        quantity: portion,
+        quantity: Number(portion) || 1,
         unit: 'porsi',
         pickupDeadline: `Hari ini, ${pickupDeadline} WIB`,
         areaLabel: addressNote || 'Sekitar Toko',
@@ -170,7 +176,7 @@ function PostMakananContent() {
       setFoodTitle('');
       setTipe('gratis');
       setPrice('');
-      setPortion(1);
+      setPortion('');
       setMapsUrl('');
       setFoodLat(null);
       setFoodLng(null);
@@ -390,11 +396,17 @@ function PostMakananContent() {
           width: 100%;
           padding: 0.65rem;
           font-size: 0.9rem;
+          color: #222222;
           border: 1px solid #CCCCCC;
           border-radius: 5px;
           outline: none;
           background: #FFF;
           box-sizing: border-box;
+        }
+
+        .form-control::placeholder {
+          color: #9CA3AF;
+          opacity: 1;
         }
 
         .form-control:focus {
@@ -866,10 +878,10 @@ function PostMakananContent() {
                     type="number"
                     id="portion"
                     className="form-control"
-                    placeholder="1"
+                    placeholder="Contoh: 5"
                     min="1"
                     value={portion}
-                    onChange={(e) => setPortion(Number(e.target.value) || 1)}
+                    onChange={(e) => setPortion(e.target.value ? Number(e.target.value) : '')}
                     required
                   />
                 </div>
@@ -922,7 +934,7 @@ function PostMakananContent() {
                     type="tel"
                     id="whatsapp_number"
                     className="form-control"
-                    placeholder="081234567890"
+                    placeholder="Contoh: 081234567890"
                     value={whatsappNumber}
                     onChange={(e) => setWhatsappNumber(e.target.value)}
                     required

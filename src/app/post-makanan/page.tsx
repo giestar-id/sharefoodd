@@ -188,8 +188,8 @@ function PostMakananContent() {
     }
   };
 
-  // Filter Seller's Foods & Requests (Hide if stock/quantity <= 0)
-  const myFoods = foods.filter((f) => f.userId === user?.id || f.ownerName === user?.name);
+  // Filter Seller's Foods & Requests (Strictly matched by userId FK; hide if stock/quantity <= 0)
+  const myFoods = foods.filter((f) => Boolean(user?.id) && f.userId === user?.id);
   const myActiveFoods = myFoods.filter((f) => f.status === 'AVAILABLE' && Number(f.quantity) > 0);
 
   // Filter incoming requests for seller's foods

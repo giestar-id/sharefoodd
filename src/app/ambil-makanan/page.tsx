@@ -127,7 +127,7 @@ function AmbilMakananContent() {
     const alreadyOrdered = requests.some(
       (r) =>
         r.foodId === food.id &&
-        (r.requesterId === user?.id || r.requesterName === user?.name) &&
+        r.requesterId === user?.id &&
         (r.status === 'PENDING' || r.status === 'APPROVED')
     );
 
@@ -152,7 +152,7 @@ function AmbilMakananContent() {
     const alreadyOrdered = requests.some(
       (r) =>
         r.foodId === selectedFood.id &&
-        (r.requesterId === user?.id || r.requesterName === user?.name) &&
+        r.requesterId === user?.id &&
         (r.status === 'PENDING' || r.status === 'APPROVED')
     );
 
@@ -220,8 +220,8 @@ function AmbilMakananContent() {
     return isPaid && matchesSearch && matchesRadius;
   });
 
-  // User's Requests (Notifikasi & Status vs Riwayat)
-  const myRequests = requests.filter((r) => r.requesterId === user?.id || r.requesterName === user?.name);
+  // User's Requests (Notifikasi & Status vs Riwayat) — strictly matched by requesterId FK
+  const myRequests = requests.filter((r) => Boolean(user?.id) && r.requesterId === user?.id);
   const notifikasiMyRequests = myRequests.filter(
     (r) => r.status === 'PENDING' || r.status === 'APPROVED' || r.status === 'DECLINED' || r.status === 'CANCELLED'
   );
@@ -841,15 +841,15 @@ function AmbilMakananContent() {
                       </div>
                       <button
                         className="btn btn-green"
-                        disabled={item.userId === user?.id || item.ownerName === user?.name}
+                        disabled={Boolean(user?.id) && item.userId === user?.id}
                         style={
-                          item.userId === user?.id || item.ownerName === user?.name
+                          Boolean(user?.id) && item.userId === user?.id
                             ? { backgroundColor: '#CCCCCC', color: '#666666', cursor: 'not-allowed' }
                             : undefined
                         }
                         onClick={() => openModal(item)}
                       >
-                        {item.userId === user?.id || item.ownerName === user?.name
+                        {Boolean(user?.id) && item.userId === user?.id
                           ? 'Produk Anda Sendiri'
                           : 'Ambil Gratis'}
                       </button>
@@ -928,15 +928,15 @@ function AmbilMakananContent() {
                       </div>
                       <button
                         className="btn btn-orange"
-                        disabled={item.userId === user?.id || item.ownerName === user?.name}
+                        disabled={Boolean(user?.id) && item.userId === user?.id}
                         style={
-                          item.userId === user?.id || item.ownerName === user?.name
+                          Boolean(user?.id) && item.userId === user?.id
                             ? { backgroundColor: '#CCCCCC', color: '#666666', cursor: 'not-allowed' }
                             : undefined
                         }
                         onClick={() => openModal(item)}
                       >
-                        {item.userId === user?.id || item.ownerName === user?.name
+                        {Boolean(user?.id) && item.userId === user?.id
                           ? 'Produk Anda Sendiri'
                           : 'Pesan / Beli'}
                       </button>

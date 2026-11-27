@@ -184,10 +184,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // CREATE (Food via Prisma ORM with Instant Optimistic UI)
   const createFood = async (foodData: Partial<FoodItem>): Promise<FoodItem> => {
+    if (!user?.id) {
+      throw new Error('Silakan masuk terlebih dahulu untuk memposting makanan.');
+    }
     lastMutationAtRef.current = Date.now();
-    const foodId = foodData.id || `food-${Date.now()}`;
-    const userId = user?.id || 'user-budi';
-    const ownerName = user?.name || 'Budi Santoso';
+    const foodId = foodData.id || `food-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const userId = user.id;
+    const ownerName = user.name;
     const foodType = foodData.type || (foodData.category === 'berbayar' ? 'berbayar' : 'gratis');
     const images =
       foodData.images && foodData.images.length > 0
@@ -466,15 +469,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     message: string,
     proposedTime: string
   ) => {
+    if (!user?.id) {
+      throw new Error('Silakan masuk terlebih dahulu untuk memesan makanan.');
+    }
     lastMutationAtRef.current = Date.now();
     const targetFood = foods.find((f) => f.id === foodId);
     if (!targetFood) return;
+    if (targetFood.userId === user.id) {
+      throw new Error('Anda tidak dapat memesan makanan milik Anda sendiri.');
+    }
 
-    const requesterId = user?.id || 'user-siti';
+    const requesterId = user.id;
     const existingActive = requests.find(
       (r) =>
         r.foodId === foodId &&
-        (r.requesterId === requesterId || r.requesterName === user?.name) &&
+        r.requesterId === requesterId &&
         (r.status === 'PENDING' || r.status === 'APPROVED')
     );
     if (existingActive) {
@@ -490,14 +499,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }).replace('.', ':')} WIB`;
 
     const optimisticReq: PickupRequest = {
-      id: `req-${Date.now()}`,
+      id: `req-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       foodId: targetFood.id,
       foodTitle: targetFood.title,
       foodImage: targetFood.images[0],
       foodCategory: targetFood.category,
       requesterId,
-      requesterName: user?.name || 'Siti Rahma',
-      requesterAvatar: user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250',
+      requesterName: user.name,
+      requesterAvatar: user.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250',
       message: message || 'Halo, saya ingin mengambil makanan ini.',
       proposedPickupTime: proposedTime || 'Hari ini, 19:00 WIB',
       status: 'PENDING',

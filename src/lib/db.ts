@@ -362,24 +362,39 @@ export async function clearActiveUser() {
   });
 }
 
+function genId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
 export async function updateUserProfile(userId: string, data: Partial<User>): Promise<User | null> {
   const updated = await prisma.user.update({
     where: { id: userId },
     data: {
       ...(data.name ? { name: data.name } : {}),
-      ...(data.phone ? { phone: data.phone } : {}),
+      ...(data.phone !== undefined ? { phone: data.phone } : {}),
       ...(data.avatar ? { avatar: data.avatar } : {}),
     },
   });
+
+  // Sync denormalized name fields across Food & PickupRequest relations
+  if (data.name) {
+    await Promise.all([
+      prisma.food.updateMany({ where: { userId }, data: { ownerName: data.name } }),
+      prisma.pickupRequest.updateMany({ where: { requesterId: userId }, data: { requesterName: data.name } }),
+    ]);
+  }
 
   return mapUser(updated);
 }
 
 // PRISMA CRUD: Food with Normalized Relations (Single Parallel Round-Trip)
 export async function createFoodDb(food: any): Promise<FoodItem> {
-  const foodId = food.id || `food-${Date.now()}`;
-  const userId = food.userId || 'user-budi';
-  const ownerName = food.ownerName || 'Budi Santoso';
+  const foodId = food.id || genId('food');
+  const userId = food.userId;
+  if (!userId) {
+    throw new Error('Pengguna harus masuk terlebih dahulu untuk memposting makanan.');
+  }
+  const ownerName = food.ownerName || 'Pengguna ShareFood';
 
   const imagesList: string[] = food.images && food.images.length > 0
     ? food.images
@@ -459,7 +474,7 @@ export async function createFoodDb(food: any): Promise<FoodItem> {
       }),
       prisma.activity.create({
         data: {
-          id: `act-${Date.now()}`,
+          id: genId('act'),
           userId: userId,
           type: 'posted',
           title: 'Postingan Baru Dibuat',
@@ -505,8 +520,12 @@ export async function updateFoodDb(id: string, data: Partial<FoodItem>) {
     }),
   ]);
 
+  if (!existing) {
+    return null;
+  }
+
   let extra: any = {};
-  if (existing?.storageNotes) {
+  if (existing.storageNotes) {
     try {
       extra = JSON.parse(existing.storageNotes);
     } catch {
@@ -537,57 +556,63 @@ export async function updateFoodDb(id: string, data: Partial<FoodItem>) {
   const fullAddressVal = data.mapsUrl || data.pickupDetails?.fullAddress || existing?.pickupDetail?.fullAddress || '';
   const contactPhoneVal = data.whatsappNumber || data.pickupDetails?.contactPhone || existing?.pickupDetail?.contactPhone || '';
 
-  const updated = await prisma.food.update({
-    where: { id },
-    data: {
-      ...(data.title ? { title: data.title } : {}),
-      ...(data.category ? { category: data.category } : {}),
-      ...(data.description !== undefined ? { description: data.description } : {}),
-      ...(data.quantity !== undefined ? { quantity: data.quantity } : {}),
-      ...(data.unit ? { unit: data.unit } : {}),
-      ...(data.pickupDeadline ? { pickupDeadline: data.pickupDeadline } : {}),
-      ...(data.areaLabel ? { areaLabel: data.areaLabel } : {}),
-      storageNotes: JSON.stringify(extra),
-      ...(data.allergens ? { allergens: JSON.stringify(data.allergens) } : {}),
-      ...(data.images && data.images.length > 0
-        ? {
-            images: {
-              deleteMany: {},
-              create: data.images.map((path, idx) => ({ path, sortOrder: idx })),
-            },
-          }
-        : {}),
-      ...(hasPickupDetailUpdate
-        ? {
-            pickupDetail: {
-              upsert: {
-                create: {
-                  fullAddress: fullAddressVal,
-                  landmark: landmarkVal,
-                  contactPhone: contactPhoneVal,
-                },
-                update: {
-                  ...(landmarkVal ? { landmark: landmarkVal } : {}),
-                  ...(fullAddressVal ? { fullAddress: fullAddressVal } : {}),
-                  ...(contactPhoneVal ? { contactPhone: contactPhoneVal } : {}),
+  const [updated] = await Promise.all([
+    prisma.food.update({
+      where: { id },
+      data: {
+        ...(data.title ? { title: data.title } : {}),
+        ...(data.category ? { category: data.category } : {}),
+        ...(data.description !== undefined ? { description: data.description } : {}),
+        ...(data.quantity !== undefined ? { quantity: data.quantity } : {}),
+        ...(data.unit ? { unit: data.unit } : {}),
+        ...(data.pickupDeadline ? { pickupDeadline: data.pickupDeadline } : {}),
+        ...(data.areaLabel ? { areaLabel: data.areaLabel } : {}),
+        storageNotes: JSON.stringify(extra),
+        ...(data.allergens ? { allergens: JSON.stringify(data.allergens) } : {}),
+        ...(data.images && data.images.length > 0
+          ? {
+              images: {
+                deleteMany: {},
+                create: data.images.map((path, idx) => ({ path, sortOrder: idx })),
+              },
+            }
+          : {}),
+        ...(hasPickupDetailUpdate
+          ? {
+              pickupDetail: {
+                upsert: {
+                  create: {
+                    fullAddress: fullAddressVal,
+                    landmark: landmarkVal,
+                    contactPhone: contactPhoneVal,
+                  },
+                  update: {
+                    ...(landmarkVal ? { landmark: landmarkVal } : {}),
+                    ...(fullAddressVal ? { fullAddress: fullAddressVal } : {}),
+                    ...(contactPhoneVal ? { contactPhone: contactPhoneVal } : {}),
+                  },
                 },
               },
-            },
-          }
-        : {}),
-    },
-    include: {
-      images: { orderBy: { sortOrder: 'asc' } },
-      pickupDetail: true,
-    },
-  });
+            }
+          : {}),
+      },
+      include: {
+        images: { orderBy: { sortOrder: 'asc' } },
+        pickupDetail: true,
+      },
+    }),
+    // Keep denormalized foodTitle on PickupRequest in sync when menu title changes
+    ...(data.title
+      ? [prisma.pickupRequest.updateMany({ where: { foodId: id }, data: { foodTitle: data.title } })]
+      : []),
+  ]);
 
   return updated ? mapFood(updated) : null;
 }
 
 export async function cancelFoodDb(id: string) {
   await Promise.all([
-    prisma.food.update({
+    prisma.food.updateMany({
       where: { id },
       data: { status: 'CANCELLED' },
     }),
@@ -596,21 +621,25 @@ export async function cancelFoodDb(id: string) {
         foodId: id,
         status: { in: ['PENDING', 'APPROVED'] },
       },
-      data: { status: 'CANCELLED' },
+      data: { status: 'CANCELLED', activeFlag: null },
     }),
   ]);
 }
 
 export async function deleteFoodDb(id: string) {
-  await prisma.food.delete({
+  await prisma.food.deleteMany({
     where: { id },
   });
 }
 
 // PRISMA CRUD: PickupRequest (2 Parallel Round-Trips instead of 7 Sequential)
 export async function createRequestDb(req: PickupRequest) {
+  if (!req.requesterId) {
+    throw new Error('Pengguna harus masuk terlebih dahulu untuk memesan makanan.');
+  }
+
   const [targetFood, existingReq] = await Promise.all([
-    prisma.food.findUnique({ where: { id: req.foodId }, select: { userId: true } }),
+    prisma.food.findUnique({ where: { id: req.foodId }, select: { userId: true, status: true, quantity: true } }),
     prisma.pickupRequest.findFirst({
       where: {
         foodId: req.foodId,
@@ -620,19 +649,26 @@ export async function createRequestDb(req: PickupRequest) {
     }),
   ]);
 
-  if (targetFood && targetFood.userId === req.requesterId) {
+  if (!targetFood) {
+    throw new Error('Makanan tidak ditemukan atau sudah dihapus.');
+  }
+  if (targetFood.userId === req.requesterId) {
     throw new Error('Anda tidak dapat memesan makanan milik Anda sendiri.');
+  }
+  if (targetFood.status !== 'AVAILABLE' || targetFood.quantity <= 0) {
+    throw new Error('Makanan ini sudah habis atau tidak tersedia.');
   }
 
   if (existingReq) {
     return mapRequest(existingReq);
   }
 
+  const reqId = req.id || genId('req');
   const createReqAndBump = () =>
     Promise.all([
       prisma.pickupRequest.create({
         data: {
-          id: req.id,
+          id: reqId,
           foodId: req.foodId,
           foodTitle: req.foodTitle,
           foodImage: req.foodImage,
@@ -682,12 +718,14 @@ export async function approveRequestDb(requestId: string) {
     const targetReq = await prisma.pickupRequest.update({
       where: { id: requestId },
       data: { status: 'APPROVED', respondedAt: nowFormatted, activeFlag: 1 },
+      include: { food: { select: { userId: true } } },
     });
 
+    const actorUserId = targetReq.food?.userId || targetReq.requesterId;
     await prisma.activity.create({
       data: {
-        id: `act-${Date.now()}`,
-        userId: targetReq.requesterId,
+        id: genId('act'),
+        userId: actorUserId,
         type: 'approved',
         title: 'Permintaan Disetujui',
         description: `Anda menyetujui ${targetReq.requesterName} untuk ${targetReq.foodTitle || 'Makanan'}`,
@@ -705,11 +743,16 @@ export async function approveRequestDb(requestId: string) {
 }
 
 export async function declineRequestDb(requestId: string) {
-  await prisma.pickupRequest.update({
-    where: { id: requestId },
-    data: { status: 'DECLINED', respondedAt: formatWaktuId(), activeFlag: null },
-  });
-  return true;
+  try {
+    await prisma.pickupRequest.update({
+      where: { id: requestId },
+      data: { status: 'DECLINED', respondedAt: formatWaktuId(), activeFlag: null },
+    });
+    return true;
+  } catch (err: any) {
+    if (err?.code === 'P2025') return false;
+    throw err;
+  }
 }
 
 export async function cancelRequestDb(requestId: string) {
@@ -736,23 +779,15 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
     }),
   ]);
 
-  const completedCount = Math.max(1, targetRequests.length);
+  if (targetRequests.length === 0) {
+    return false;
+  }
+
+  const completedCount = targetRequests.length;
   const ops: Promise<any>[] = [
     prisma.pickupRequest.updateMany({
       where: requestId ? { id: requestId, foodId, status: 'APPROVED' } : { foodId, status: 'APPROVED' },
       data: { status: 'COMPLETED', respondedAt: nowFormatted, activeFlag: null },
-    }),
-    prisma.activity.create({
-      data: {
-        id: `act-${Date.now()}`,
-        userId: food?.userId || 'user-budi',
-        type: 'taken',
-        title: 'Penyerahan Selesai',
-        description: 'Makanan berhasil diserahterimakan dan ditandai TAKEN',
-        timestamp: 'Baru saja',
-        status: 'COMPLETED',
-        targetUrl: '/dashboard/riwayat',
-      },
     }),
   ];
 
@@ -761,19 +796,36 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
       prisma.user.update({
         where: { id: food.userId },
         data: { sharedCount: { increment: completedCount } },
+      }),
+      prisma.activity.create({
+        data: {
+          id: genId('act'),
+          userId: food.userId,
+          type: 'taken',
+          title: 'Penyerahan Selesai',
+          description: 'Makanan berhasil diserahterimakan dan ditandai TAKEN',
+          timestamp: 'Baru saja',
+          status: 'COMPLETED',
+          targetUrl: '/dashboard/riwayat',
+        },
       })
     );
   }
 
+  // Group increments per requesterId to avoid duplicate concurrent updates on the same User row
+  const requesterCounts = new Map<string, number>();
   for (const r of targetRequests) {
     if (r.requesterId) {
-      ops.push(
-        prisma.user.update({
-          where: { id: r.requesterId },
-          data: { receivedCount: { increment: 1 } },
-        })
-      );
+      requesterCounts.set(r.requesterId, (requesterCounts.get(r.requesterId) || 0) + 1);
     }
+  }
+  for (const [reqUserId, count] of requesterCounts.entries()) {
+    ops.push(
+      prisma.user.update({
+        where: { id: reqUserId },
+        data: { receivedCount: { increment: count } },
+      })
+    );
   }
 
   await Promise.all(ops);

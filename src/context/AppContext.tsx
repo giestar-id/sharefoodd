@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { FoodItem, PickupRequest, ActivityLog, User } from '@/types';
 
 export type UserRole = 'PENGAMBIL' | 'PEMOSTING';
@@ -41,6 +41,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [requests, setRequests] = useState<PickupRequest[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const lastFetchAtRef = useRef<number>(0);
+  const lastMutationAtRef = useRef<number>(0);
 
   // Sync role with localStorage
   useEffect(() => {
@@ -61,11 +63,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Fetch live records directly from PostgreSQL via Prisma ORM API (authenticated via HTTP-only session cookie)
-  const refreshFromDb = useCallback(async () => {
+  const refreshFromDb = useCallback(async (force = false) => {
+    const now = Date.now();
+    if (!force && (now - lastFetchAtRef.current < 10000 || now - lastMutationAtRef.current < 5000)) {
+      return;
+    }
+    lastFetchAtRef.current = now;
     try {
       const res = await fetch('/api/data', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
+        // Skip overwriting state if a mutation happened while this fetch was in flight
+        if (lastMutationAtRef.current > now) return;
         setUser(data.user || null);
         setFoods(Array.isArray(data.foods) ? data.foods : []);
         setRequests(Array.isArray(data.requests) ? data.requests : []);
@@ -79,9 +88,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshFromDb();
+    void refreshFromDb(true);
     const handleFocus = () => {
-      refreshFromDb();
+      void refreshFromDb(false);
     };
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
@@ -98,7 +107,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (res.ok && data.user) {
         setUser(data.user);
-        void refreshFromDb();
+        void refreshFromDb(true);
         return { ok: true };
       }
       return { ok: false, error: data.error || 'Email atau kata sandi salah.' };
@@ -124,7 +133,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (res.ok && data.user) {
         setUser(data.user);
-        void refreshFromDb();
+        void refreshFromDb(true);
         return { ok: true };
       }
       return { ok: false, error: data.error || 'Gagal mendaftar akun.' };
@@ -173,52 +182,89 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // CREATE (Food via Prisma ORM)
+  // CREATE (Food via Prisma ORM with Instant Optimistic UI)
   const createFood = async (foodData: Partial<FoodItem>): Promise<FoodItem> => {
-    const payload = {
-      ...foodData,
-      userId: user?.id || 'user-budi',
-      ownerName: user?.name || 'Budi Santoso',
+    lastMutationAtRef.current = Date.now();
+    const foodId = foodData.id || `food-${Date.now()}`;
+    const userId = user?.id || 'user-budi';
+    const ownerName = user?.name || 'Budi Santoso';
+    const foodType = foodData.type || (foodData.category === 'berbayar' ? 'berbayar' : 'gratis');
+    const images =
+      foodData.images && foodData.images.length > 0
+        ? foodData.images
+        : ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800'];
+
+    const optimisticFood: FoodItem = {
+      id: foodId,
+      userId,
+      ownerName,
+      title: foodData.title || 'Makanan Tanpa Judul',
+      category: foodData.category || (foodType === 'berbayar' ? 'berbayar' : 'makanan_berat'),
+      description: foodData.description || foodData.addressNote || '',
+      quantity: Number(foodData.quantity) || 1,
+      unit: foodData.unit || 'porsi',
+      preparedAt: foodData.preparedAt || 'Baru saja',
+      pickupDeadline: foodData.pickupDeadline || 'Hari ini, 21:00 WIB',
+      areaLabel: foodData.addressNote || foodData.areaLabel || 'Tebet Barat, Jakarta Selatan',
+      storageNotes: foodData.storageNotes || '',
+      allergens: foodData.allergens || [],
+      status: 'AVAILABLE',
+      images,
+      createdAt: new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' }),
+      requestCount: 0,
+      price: Number(foodData.price) || 0,
+      type: foodType,
+      mapsUrl: foodData.mapsUrl || foodData.pickupDetails?.fullAddress || '',
+      qrisUrl: foodData.qrisUrl || '',
+      whatsappNumber: foodData.whatsappNumber || foodData.pickupDetails?.contactPhone || user?.phone || '',
+      addressNote: foodData.addressNote || foodData.pickupDetails?.landmark || '',
+      latitude: typeof foodData.latitude === 'number' ? foodData.latitude : null,
+      longitude: typeof foodData.longitude === 'number' ? foodData.longitude : null,
       pickupDetails: {
-        foodId: '',
-        fullAddress: foodData.pickupDetails?.fullAddress || 'Jl. Tebet Barat Dalam IV No. 18, Jakarta Selatan',
-        landmark: foodData.pickupDetails?.landmark || 'Pagar hitam samping apotek',
-        contactPhone: foodData.pickupDetails?.contactPhone || user?.phone || '0812-9876-5432',
+        foodId,
+        fullAddress: foodData.mapsUrl || foodData.pickupDetails?.fullAddress || 'Jl. Tebet Barat Dalam IV No. 18, Jakarta Selatan',
+        landmark: foodData.addressNote || foodData.pickupDetails?.landmark || 'Pagar hitam samping apotek',
+        contactPhone: foodData.whatsappNumber || foodData.pickupDetails?.contactPhone || user?.phone || '0812-9876-5432',
       },
     };
 
-    const res = await fetch('/api/foods', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      throw new Error('Gagal menyimpan makanan ke database Prisma');
-    }
-
-    const createdFood: FoodItem = await res.json();
-    setFoods((prev) => [createdFood, ...prev]);
-
-    // Also update activity
+    // Instant UI update
+    setFoods((prev) => [optimisticFood, ...prev]);
     setActivities((prev) => [
       {
         id: `act-${Date.now()}`,
         type: 'posted',
         title: 'Postingan Baru Dibuat',
-        description: `Anda membagikan ${createdFood.title} (${createdFood.quantity} ${createdFood.unit})`,
+        description: `Anda membagikan ${optimisticFood.title} (${optimisticFood.quantity} ${optimisticFood.unit})`,
         timestamp: 'Baru saja',
         status: 'AVAILABLE',
-        targetUrl: `/dashboard/makanan-saya/${createdFood.id}`,
+        targetUrl: `/dashboard/makanan-saya/${optimisticFood.id}`,
       },
       ...prev,
     ]);
 
-    return createdFood;
+    // Sync with database in background & reconcile resolved coordinates
+    void fetch('/api/foods', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(optimisticFood),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Gagal menyimpan makanan ke database');
+        const createdFood: FoodItem = await res.json();
+        setFoods((prev) => prev.map((f) => (f.id === foodId ? createdFood : f)));
+      })
+      .catch((err) => {
+        console.error('Failed to persist food in Prisma:', err);
+        setFoods((prev) => prev.filter((f) => f.id !== foodId));
+      });
+
+    return optimisticFood;
   };
 
   // UPDATE (Food via Prisma ORM)
   const updateFood = async (id: string, foodData: Partial<FoodItem>) => {
+    lastMutationAtRef.current = Date.now();
     setFoods((prev) =>
       prev.map((f) => {
         if (f.id === id) {
@@ -236,19 +282,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
-    try {
-      await fetch(`/api/foods/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(foodData),
-      });
-    } catch (e) {
-      console.error('Failed to update food in Prisma:', e);
-    }
+    void fetch(`/api/foods/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(foodData),
+    }).catch((e) => console.error('Failed to update food in Prisma:', e));
   };
 
   // DELETE / CANCEL (Soft Delete via Prisma ORM)
   const cancelFood = async (id: string) => {
+    lastMutationAtRef.current = Date.now();
     setFoods((prev) =>
       prev.map((f) => (f.id === id ? { ...f, status: 'CANCELLED' } : f))
     );
@@ -260,27 +303,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       )
     );
 
-    try {
-      await fetch(`/api/foods/${id}/cancel`, { method: 'POST' });
-    } catch (e) {
-      console.error('Failed to cancel food in Prisma:', e);
-    }
+    void fetch(`/api/foods/${id}/cancel`, { method: 'POST' }).catch((e) =>
+      console.error('Failed to cancel food in Prisma:', e)
+    );
   };
 
   // HARD DELETE via Prisma ORM
   const deleteFood = async (id: string) => {
+    lastMutationAtRef.current = Date.now();
     setFoods((prev) => prev.filter((f) => f.id !== id));
     setRequests((prev) => prev.filter((r) => r.foodId !== id));
 
-    try {
-      await fetch(`/api/foods/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      console.error('Failed to delete food in Prisma:', e);
-    }
+    void fetch(`/api/foods/${id}`, { method: 'DELETE' }).catch((e) =>
+      console.error('Failed to delete food in Prisma:', e)
+    );
   };
 
-  // APPROVE REQUEST via Prisma ORM (Atomic Transaction)
+  // APPROVE REQUEST via Prisma ORM (Instant Optimistic UI)
   const approveRequest = async (requestId: string) => {
+    lastMutationAtRef.current = Date.now();
     const targetReq = requests.find((r) => r.id === requestId);
     if (!targetReq) return;
 
@@ -319,15 +360,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
-    try {
-      await fetch(`/api/requests/${requestId}/approve`, { method: 'POST' });
-    } catch (e) {
-      console.error('Failed to approve request in Prisma:', e);
-    }
+    void fetch(`/api/requests/${requestId}/approve`, { method: 'POST' }).catch((e) =>
+      console.error('Failed to approve request in Prisma:', e)
+    );
   };
 
   // DECLINE REQUEST via Prisma ORM
   const declineRequest = async (requestId: string) => {
+    lastMutationAtRef.current = Date.now();
     const nowFormatted = `${new Date().toLocaleString('id-ID', {
       day: '2-digit',
       month: 'short',
@@ -344,39 +384,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       )
     );
 
-    try {
-      await fetch(`/api/requests/${requestId}/decline`, { method: 'POST' });
-    } catch (e) {
-      console.error('Failed to decline request in Prisma:', e);
-    }
+    void fetch(`/api/requests/${requestId}/decline`, { method: 'POST' }).catch((e) =>
+      console.error('Failed to decline request in Prisma:', e)
+    );
   };
 
   // CANCEL REQUEST via Prisma ORM
   const cancelRequest = async (requestId: string) => {
+    lastMutationAtRef.current = Date.now();
     const targetReq = requests.find((r) => r.id === requestId);
     if (!targetReq) return;
-
-    if (targetReq.status === 'APPROVED') {
-      setFoods((prev) =>
-        prev.map((f) =>
-          f.id === targetReq.foodId ? { ...f, status: 'AVAILABLE' } : f
-        )
-      );
-    }
 
     setRequests((prev) =>
       prev.map((r) => (r.id === requestId ? { ...r, status: 'CANCELLED' } : r))
     );
 
-    try {
-      await fetch(`/api/requests/${requestId}/cancel`, { method: 'POST' });
-    } catch (e) {
-      console.error('Failed to cancel request in Prisma:', e);
-    }
+    void fetch(`/api/requests/${requestId}/cancel`, { method: 'POST' }).catch((e) =>
+      console.error('Failed to cancel request in Prisma:', e)
+    );
   };
 
-  // MARK AS TAKEN via Prisma ORM (Atomic Transaction — keeps food active until seller sets stock to 0)
+  // MARK AS TAKEN via Prisma ORM (Instant Optimistic UI — keeps food active until seller sets stock to 0)
   const markAsTaken = async (foodId: string, requestId?: string) => {
+    lastMutationAtRef.current = Date.now();
     const matchingApproved = requests.filter(
       (r) =>
         r.foodId === foodId &&
@@ -423,23 +453,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
-    try {
-      await fetch(`/api/foods/${foodId}/taken`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, requestId }),
-      });
-    } catch (e) {
-      console.error('Failed to mark food as taken in Prisma:', e);
-    }
+    void fetch(`/api/foods/${foodId}/taken`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user?.id, requestId }),
+    }).catch((e) => console.error('Failed to mark food as taken in Prisma:', e));
   };
 
-  // CREATE PICKUP REQUEST via Prisma ORM
+  // CREATE PICKUP REQUEST via Prisma ORM (Instant Optimistic UI)
   const requestFood = async (
     foodId: string,
     message: string,
     proposedTime: string
   ) => {
+    lastMutationAtRef.current = Date.now();
     const targetFood = foods.find((f) => f.id === foodId);
     if (!targetFood) return;
 
@@ -454,7 +481,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const payload: Partial<PickupRequest> = {
+    const nowFormatted = `${new Date().toLocaleString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).replace('.', ':')} WIB`;
+
+    const optimisticReq: PickupRequest = {
       id: `req-${Date.now()}`,
       foodId: targetFood.id,
       foodTitle: targetFood.title,
@@ -466,29 +501,39 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       message: message || 'Halo, saya ingin mengambil makanan ini.',
       proposedPickupTime: proposedTime || 'Hari ini, 19:00 WIB',
       status: 'PENDING',
+      createdAt: nowFormatted,
     };
 
-    try {
-      const res = await fetch('/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+    // Instant UI update
+    setRequests((prev) => [optimisticReq, ...prev]);
+    setFoods((prev) =>
+      prev.map((f) =>
+        f.id === foodId ? { ...f, requestCount: (f.requestCount || 0) + 1 } : f
+      )
+    );
 
-      if (res.ok) {
-        const createdReq = await res.json();
+    // Sync with database in background
+    void fetch('/api/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(optimisticReq),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Gagal membuat pesanan');
+        const createdReq: PickupRequest = await res.json();
         setRequests((prev) =>
-          prev.some((r) => r.id === createdReq.id) ? prev : [createdReq, ...prev]
+          prev.map((r) => (r.id === optimisticReq.id ? createdReq : r))
         );
+      })
+      .catch((e) => {
+        console.error('Failed to create request in Prisma:', e);
+        setRequests((prev) => prev.filter((r) => r.id !== optimisticReq.id));
         setFoods((prev) =>
           prev.map((f) =>
-            f.id === foodId ? { ...f, requestCount: (f.requestCount || 0) + 1 } : f
+            f.id === foodId ? { ...f, requestCount: Math.max(0, (f.requestCount || 1) - 1) } : f
           )
         );
-      }
-    } catch (e) {
-      console.error('Failed to create request in Prisma:', e);
-    }
+      });
   };
 
   return (

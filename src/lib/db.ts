@@ -143,9 +143,15 @@ function mapActivity(a: any): ActivityLog {
   };
 }
 
-// Queries using Prisma ORM with eager relation loading
-export async function getAllData(sessionUserId: string | null = null) {
-  const [foodsRaw, requestsRaw, usersRaw, activitiesRaw] = await Promise.all([
+// Queries using Prisma ORM with parallel single-round-trip loading
+export async function getAllDataByToken(sessionToken: string | null = null) {
+  const [sessionRaw, foodsRaw, requestsRaw, activitiesRaw] = await Promise.all([
+    sessionToken
+      ? prisma.session.findUnique({
+          where: { token: sessionToken },
+          include: { user: true },
+        })
+      : Promise.resolve(null),
     prisma.food.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -154,23 +160,45 @@ export async function getAllData(sessionUserId: string | null = null) {
       },
     }),
     prisma.pickupRequest.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.user.findMany(),
     prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }),
   ]);
 
-  const foods = foodsRaw.map(mapFood);
-  const requests = requestsRaw.map(mapRequest);
-  const users = usersRaw.map(mapUser);
-  const activities = activitiesRaw.map(mapActivity);
-
-  const currentUser = sessionUserId ? users.find((u) => u.id === sessionUserId) || null : null;
+  let currentUser: User | null = null;
+  if (sessionRaw) {
+    if (sessionRaw.expiresAt < new Date()) {
+      void prisma.session.delete({ where: { id: sessionRaw.id } }).catch(() => {});
+    } else if (sessionRaw.user) {
+      currentUser = mapUser(sessionRaw.user);
+    }
+  }
 
   return {
     user: currentUser,
-    users,
-    foods,
-    requests,
-    activities,
+    foods: foodsRaw.map(mapFood),
+    requests: requestsRaw.map(mapRequest),
+    activities: activitiesRaw.map(mapActivity),
+  };
+}
+
+export async function getAllData(sessionUserId: string | null = null) {
+  const [userRaw, foodsRaw, requestsRaw, activitiesRaw] = await Promise.all([
+    sessionUserId ? prisma.user.findUnique({ where: { id: sessionUserId } }) : Promise.resolve(null),
+    prisma.food.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        images: { orderBy: { sortOrder: 'asc' } },
+        pickupDetail: true,
+      },
+    }),
+    prisma.pickupRequest.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }),
+  ]);
+
+  return {
+    user: userRaw ? mapUser(userRaw) : null,
+    foods: foodsRaw.map(mapFood),
+    requests: requestsRaw.map(mapRequest),
+    activities: activitiesRaw.map(mapActivity),
   };
 }
 
@@ -347,24 +375,11 @@ export async function updateUserProfile(userId: string, data: Partial<User>): Pr
   return mapUser(updated);
 }
 
-// PRISMA CRUD: Food with Normalized Relations
+// PRISMA CRUD: Food with Normalized Relations (Single Parallel Round-Trip)
 export async function createFoodDb(food: any): Promise<FoodItem> {
   const foodId = food.id || `food-${Date.now()}`;
   const userId = food.userId || 'user-budi';
   const ownerName = food.ownerName || 'Budi Santoso';
-
-  // Ensure user exists
-  const existingUser = await prisma.user.findUnique({ where: { id: userId } });
-  if (!existingUser) {
-    await prisma.user.create({
-      data: {
-        id: userId,
-        name: ownerName,
-        email: `${userId}@sharefood.local`,
-        roleBadge: 'Donatur Komunitas',
-      },
-    });
-  }
 
   const imagesList: string[] = food.images && food.images.length > 0
     ? food.images
@@ -405,156 +420,173 @@ export async function createFoodDb(food: any): Promise<FoodItem> {
     longitude: resolvedLng,
   };
 
-  const created = await prisma.$transaction(async (tx) => {
-    const f = await tx.food.create({
-      data: {
-        id: foodId,
-        userId: userId,
-        ownerName: ownerName,
-        title: food.title || 'Makanan Tanpa Judul',
-        category: food.category || (extraData.type === 'berbayar' ? 'berbayar' : 'makanan_berat'),
-        description: food.description || extraData.addressNote || '',
-        quantity: Number(food.quantity) || 1,
-        unit: food.unit || 'porsi',
-        preparedAt: food.preparedAt || 'Baru saja',
-        pickupDeadline: food.pickupDeadline || 'Hari ini, 21:00 WIB',
-        areaLabel: extraData.addressNote || food.areaLabel || 'Tebet Barat, Jakarta Selatan',
-        storageNotes: JSON.stringify(extraData),
-        allergens: JSON.stringify(food.allergens || []),
-        status: food.status || 'AVAILABLE',
-        requestCount: 0,
-        images: {
-          create: imagesList.map((imgUrl, idx) => ({
-            path: imgUrl,
-            sortOrder: idx,
-          })),
+  const foodCreateData = {
+    id: foodId,
+    userId: userId,
+    ownerName: ownerName,
+    title: food.title || 'Makanan Tanpa Judul',
+    category: food.category || (extraData.type === 'berbayar' ? 'berbayar' : 'makanan_berat'),
+    description: food.description || extraData.addressNote || '',
+    quantity: Number(food.quantity) || 1,
+    unit: food.unit || 'porsi',
+    preparedAt: food.preparedAt || 'Baru saja',
+    pickupDeadline: food.pickupDeadline || 'Hari ini, 21:00 WIB',
+    areaLabel: extraData.addressNote || food.areaLabel || 'Tebet Barat, Jakarta Selatan',
+    storageNotes: JSON.stringify(extraData),
+    allergens: JSON.stringify(food.allergens || []),
+    status: food.status || 'AVAILABLE',
+    requestCount: 0,
+    images: {
+      create: imagesList.map((imgUrl, idx) => ({
+        path: imgUrl,
+        sortOrder: idx,
+      })),
+    },
+    pickupDetail: {
+      create: {
+        fullAddress: extraData.mapsUrl || food.pickupDetails?.fullAddress || 'Jl. Tebet Barat Dalam IV No. 18, Jakarta Selatan',
+        landmark: extraData.addressNote || food.pickupDetails?.landmark || 'Pagar hitam samping apotek',
+        contactPhone: extraData.whatsappNumber || food.pickupDetails?.contactPhone || '0812-9876-5432',
+      },
+    },
+  };
+
+  const createFoodAndActivity = () =>
+    Promise.all([
+      prisma.food.create({
+        data: foodCreateData,
+        include: { images: true, pickupDetail: true },
+      }),
+      prisma.activity.create({
+        data: {
+          id: `act-${Date.now()}`,
+          userId: userId,
+          type: 'posted',
+          title: 'Postingan Baru Dibuat',
+          description: `Anda membagikan ${foodCreateData.title} (${foodCreateData.quantity} ${foodCreateData.unit})`,
+          timestamp: 'Baru saja',
+          status: 'AVAILABLE',
+          targetUrl: `/dashboard/makanan-saya/${foodId}`,
         },
-        pickupDetail: {
-          create: {
-            fullAddress: extraData.mapsUrl || food.pickupDetails?.fullAddress || 'Jl. Tebet Barat Dalam IV No. 18, Jakarta Selatan',
-            landmark: extraData.addressNote || food.pickupDetails?.landmark || 'Pagar hitam samping apotek',
-            contactPhone: extraData.whatsappNumber || food.pickupDetails?.contactPhone || '0812-9876-5432',
-          },
+      }),
+    ]);
+
+  try {
+    const [created] = await createFoodAndActivity();
+    return mapFood(created);
+  } catch (err: any) {
+    // Fallback only if userId does not exist yet (FK violation P2003)
+    if (err?.code === 'P2003') {
+      await prisma.user.upsert({
+        where: { id: userId },
+        update: {},
+        create: {
+          id: userId,
+          name: ownerName,
+          email: `${userId}@sharefood.local`,
+          roleBadge: 'Donatur Komunitas',
         },
-      },
-      include: {
-        images: true,
-        pickupDetail: true,
-      },
-    });
-
-    await tx.activity.create({
-      data: {
-        id: `act-${Date.now()}`,
-        userId: userId,
-        type: 'posted',
-        title: 'Postingan Baru Dibuat',
-        description: `Anda membagikan ${f.title} (${f.quantity} ${f.unit})`,
-        timestamp: 'Baru saja',
-        status: 'AVAILABLE',
-        targetUrl: `/dashboard/makanan-saya/${f.id}`,
-      },
-    });
-
-    return f;
-  });
-
-  return mapFood(created);
+      });
+      const [created] = await createFoodAndActivity();
+      return mapFood(created);
+    }
+    throw err;
+  }
 }
 
 export async function updateFoodDb(id: string, data: Partial<FoodItem>) {
-  let resolvedFromNewMaps: { lat: number; lng: number } | null = null;
-  if (data.mapsUrl !== undefined && data.latitude == null && data.longitude == null) {
-    resolvedFromNewMaps = await resolveMapsCoordinates(data.mapsUrl);
+  const [resolvedFromNewMaps, existing] = await Promise.all([
+    data.mapsUrl !== undefined && data.latitude == null && data.longitude == null
+      ? resolveMapsCoordinates(data.mapsUrl)
+      : Promise.resolve(null),
+    prisma.food.findUnique({
+      where: { id },
+      select: { storageNotes: true, pickupDetail: true },
+    }),
+  ]);
+
+  let extra: any = {};
+  if (existing?.storageNotes) {
+    try {
+      extra = JSON.parse(existing.storageNotes);
+    } catch {
+      extra = {};
+    }
   }
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const existing = await tx.food.findUnique({
-      where: { id },
-      include: { pickupDetail: true },
-    });
+  if (data.type !== undefined) extra.type = data.type;
+  if (data.price !== undefined) extra.price = Number(data.price) || 0;
+  if (data.mapsUrl !== undefined) extra.mapsUrl = data.mapsUrl;
+  if (data.qrisUrl !== undefined) extra.qrisUrl = data.qrisUrl;
+  if (data.whatsappNumber !== undefined) extra.whatsappNumber = data.whatsappNumber;
+  if (data.addressNote !== undefined) extra.addressNote = data.addressNote;
+  if (typeof data.latitude === 'number') extra.latitude = data.latitude;
+  if (typeof data.longitude === 'number') extra.longitude = data.longitude;
+  if (resolvedFromNewMaps) {
+    extra.latitude = resolvedFromNewMaps.lat;
+    extra.longitude = resolvedFromNewMaps.lng;
+  }
 
-    let extra: any = {};
-    if (existing?.storageNotes) {
-      try {
-        extra = JSON.parse(existing.storageNotes);
-      } catch {
-        extra = {};
-      }
-    }
+  const hasPickupDetailUpdate =
+    data.addressNote !== undefined ||
+    data.mapsUrl !== undefined ||
+    data.whatsappNumber !== undefined ||
+    data.pickupDetails !== undefined;
 
-    if (data.type !== undefined) extra.type = data.type;
-    if (data.price !== undefined) extra.price = Number(data.price) || 0;
-    if (data.mapsUrl !== undefined) extra.mapsUrl = data.mapsUrl;
-    if (data.qrisUrl !== undefined) extra.qrisUrl = data.qrisUrl;
-    if (data.whatsappNumber !== undefined) extra.whatsappNumber = data.whatsappNumber;
-    if (data.addressNote !== undefined) extra.addressNote = data.addressNote;
-    if (typeof data.latitude === 'number') extra.latitude = data.latitude;
-    if (typeof data.longitude === 'number') extra.longitude = data.longitude;
-    if (resolvedFromNewMaps) {
-      extra.latitude = resolvedFromNewMaps.lat;
-      extra.longitude = resolvedFromNewMaps.lng;
-    }
+  const landmarkVal = data.addressNote || data.pickupDetails?.landmark || existing?.pickupDetail?.landmark || '';
+  const fullAddressVal = data.mapsUrl || data.pickupDetails?.fullAddress || existing?.pickupDetail?.fullAddress || '';
+  const contactPhoneVal = data.whatsappNumber || data.pickupDetails?.contactPhone || existing?.pickupDetail?.contactPhone || '';
 
-    await tx.food.update({
-      where: { id },
-      data: {
-        ...(data.title ? { title: data.title } : {}),
-        ...(data.category ? { category: data.category } : {}),
-        ...(data.description !== undefined ? { description: data.description } : {}),
-        ...(data.quantity !== undefined ? { quantity: data.quantity } : {}),
-        ...(data.unit ? { unit: data.unit } : {}),
-        ...(data.pickupDeadline ? { pickupDeadline: data.pickupDeadline } : {}),
-        ...(data.areaLabel ? { areaLabel: data.areaLabel } : {}),
-        storageNotes: JSON.stringify(extra),
-        ...(data.allergens ? { allergens: JSON.stringify(data.allergens) } : {}),
-      },
-    });
-
-    if (data.images && data.images.length > 0) {
-      await tx.foodImage.deleteMany({ where: { foodId: id } });
-      await tx.foodImage.createMany({
-        data: data.images.map((path, idx) => ({
-          foodId: id,
-          path,
-          sortOrder: idx,
-        })),
-      });
-    }
-
-    const landmarkVal = data.addressNote || data.pickupDetails?.landmark || existing?.pickupDetail?.landmark || '';
-    const fullAddressVal = data.mapsUrl || data.pickupDetails?.fullAddress || existing?.pickupDetail?.fullAddress || '';
-    const contactPhoneVal = data.whatsappNumber || data.pickupDetails?.contactPhone || existing?.pickupDetail?.contactPhone || '';
-
-    await tx.pickupDetail.upsert({
-      where: { foodId: id },
-      create: {
-        foodId: id,
-        fullAddress: fullAddressVal,
-        landmark: landmarkVal,
-        contactPhone: contactPhoneVal,
-      },
-      update: {
-        ...(landmarkVal ? { landmark: landmarkVal } : {}),
-        ...(fullAddressVal ? { fullAddress: fullAddressVal } : {}),
-        ...(contactPhoneVal ? { contactPhone: contactPhoneVal } : {}),
-      },
-    });
-
-    return await tx.food.findUnique({
-      where: { id },
-      include: {
-        images: { orderBy: { sortOrder: 'asc' } },
-        pickupDetail: true,
-      },
-    });
+  const updated = await prisma.food.update({
+    where: { id },
+    data: {
+      ...(data.title ? { title: data.title } : {}),
+      ...(data.category ? { category: data.category } : {}),
+      ...(data.description !== undefined ? { description: data.description } : {}),
+      ...(data.quantity !== undefined ? { quantity: data.quantity } : {}),
+      ...(data.unit ? { unit: data.unit } : {}),
+      ...(data.pickupDeadline ? { pickupDeadline: data.pickupDeadline } : {}),
+      ...(data.areaLabel ? { areaLabel: data.areaLabel } : {}),
+      storageNotes: JSON.stringify(extra),
+      ...(data.allergens ? { allergens: JSON.stringify(data.allergens) } : {}),
+      ...(data.images && data.images.length > 0
+        ? {
+            images: {
+              deleteMany: {},
+              create: data.images.map((path, idx) => ({ path, sortOrder: idx })),
+            },
+          }
+        : {}),
+      ...(hasPickupDetailUpdate
+        ? {
+            pickupDetail: {
+              upsert: {
+                create: {
+                  fullAddress: fullAddressVal,
+                  landmark: landmarkVal,
+                  contactPhone: contactPhoneVal,
+                },
+                update: {
+                  ...(landmarkVal ? { landmark: landmarkVal } : {}),
+                  ...(fullAddressVal ? { fullAddress: fullAddressVal } : {}),
+                  ...(contactPhoneVal ? { contactPhone: contactPhoneVal } : {}),
+                },
+              },
+            },
+          }
+        : {}),
+    },
+    include: {
+      images: { orderBy: { sortOrder: 'asc' } },
+      pickupDetail: true,
+    },
   });
 
   return updated ? mapFood(updated) : null;
 }
 
 export async function cancelFoodDb(id: string) {
-  await prisma.$transaction([
+  await Promise.all([
     prisma.food.update({
       where: { id },
       data: { status: 'CANCELLED' },
@@ -575,84 +607,84 @@ export async function deleteFoodDb(id: string) {
   });
 }
 
-// PRISMA CRUD: PickupRequest
+// PRISMA CRUD: PickupRequest (2 Parallel Round-Trips instead of 7 Sequential)
 export async function createRequestDb(req: PickupRequest) {
-  // Prevent self-ordering (owner cannot order their own food)
-  const targetFood = await prisma.food.findUnique({ where: { id: req.foodId } });
+  const [targetFood, existingReq] = await Promise.all([
+    prisma.food.findUnique({ where: { id: req.foodId }, select: { userId: true } }),
+    prisma.pickupRequest.findFirst({
+      where: {
+        foodId: req.foodId,
+        requesterId: req.requesterId,
+        status: { in: ['PENDING', 'APPROVED'] },
+      },
+    }),
+  ]);
+
   if (targetFood && targetFood.userId === req.requesterId) {
     throw new Error('Anda tidak dapat memesan makanan milik Anda sendiri.');
   }
 
-  // Prevent duplicate active requests (PENDING or APPROVED) by the same user for the same food
-  const existingReq = await prisma.pickupRequest.findFirst({
-    where: {
-      foodId: req.foodId,
-      requesterId: req.requesterId,
-      status: { in: ['PENDING', 'APPROVED'] },
-    },
-  });
   if (existingReq) {
     return mapRequest(existingReq);
   }
 
-  // Ensure requester exists
-  const existingUser = await prisma.user.findUnique({ where: { id: req.requesterId } });
-  if (!existingUser) {
-    await prisma.user.create({
-      data: {
-        id: req.requesterId,
-        name: req.requesterName || 'Pemohon',
-        email: `${req.requesterId}@sharefood.local`,
-        roleBadge: 'Pengambil Makanan',
-      },
-    });
+  const createReqAndBump = () =>
+    Promise.all([
+      prisma.pickupRequest.create({
+        data: {
+          id: req.id,
+          foodId: req.foodId,
+          foodTitle: req.foodTitle,
+          foodImage: req.foodImage,
+          foodCategory: req.foodCategory,
+          requesterId: req.requesterId,
+          requesterName: req.requesterName,
+          requesterPhone: (req as any).requesterPhone || '0812-3456-7890',
+          requesterAvatar: req.requesterAvatar,
+          requesterStats: req.requesterStats,
+          message: req.message,
+          proposedPickupTime: req.proposedPickupTime,
+          status: req.status,
+          activeFlag: ['PENDING', 'APPROVED'].includes(req.status) ? 1 : null,
+        },
+      }),
+      prisma.food.update({
+        where: { id: req.foodId },
+        data: { requestCount: { increment: 1 } },
+      }),
+    ]);
+
+  try {
+    const [created] = await createReqAndBump();
+    return mapRequest(created);
+  } catch (err: any) {
+    if (err?.code === 'P2003') {
+      await prisma.user.upsert({
+        where: { id: req.requesterId },
+        update: {},
+        create: {
+          id: req.requesterId,
+          name: req.requesterName || 'Pemohon',
+          email: `${req.requesterId}@sharefood.local`,
+          roleBadge: 'Pengambil Makanan',
+        },
+      });
+      const [created] = await createReqAndBump();
+      return mapRequest(created);
+    }
+    throw err;
   }
-
-  const created = await prisma.$transaction(async (tx) => {
-    const r = await tx.pickupRequest.create({
-      data: {
-        id: req.id,
-        foodId: req.foodId,
-        foodTitle: req.foodTitle,
-        foodImage: req.foodImage,
-        foodCategory: req.foodCategory,
-        requesterId: req.requesterId,
-        requesterName: req.requesterName,
-        requesterPhone: (req as any).requesterPhone || '0812-3456-7890',
-        requesterAvatar: req.requesterAvatar,
-        requesterStats: req.requesterStats,
-        message: req.message,
-        proposedPickupTime: req.proposedPickupTime,
-        status: req.status,
-        activeFlag: ['PENDING', 'APPROVED'].includes(req.status) ? 1 : null,
-      },
-    });
-
-    await tx.food.update({
-      where: { id: req.foodId },
-      data: { requestCount: { increment: 1 } },
-    });
-
-    return r;
-  });
-
-  return mapRequest(created);
 }
 
 export async function approveRequestDb(requestId: string) {
-  return await prisma.$transaction(async (tx) => {
-    const targetReq = await tx.pickupRequest.findUnique({ where: { id: requestId } });
-    if (!targetReq) return false;
-
-    // 1. Approve target request (stock/visibility is managed manually by the seller via Edit Menu)
-    const nowFormatted = formatWaktuId();
-    await tx.pickupRequest.update({
+  const nowFormatted = formatWaktuId();
+  try {
+    const targetReq = await prisma.pickupRequest.update({
       where: { id: requestId },
       data: { status: 'APPROVED', respondedAt: nowFormatted, activeFlag: 1 },
     });
 
-    // 2. Log activity
-    await tx.activity.create({
+    await prisma.activity.create({
       data: {
         id: `act-${Date.now()}`,
         userId: targetReq.requesterId,
@@ -666,7 +698,10 @@ export async function approveRequestDb(requestId: string) {
     });
 
     return true;
-  });
+  } catch (err: any) {
+    if (err?.code === 'P2025') return false;
+    throw err;
+  }
 }
 
 export async function declineRequestDb(requestId: string) {
@@ -678,66 +713,36 @@ export async function declineRequestDb(requestId: string) {
 }
 
 export async function cancelRequestDb(requestId: string) {
-  return await prisma.$transaction(async (tx) => {
-    const targetReq = await tx.pickupRequest.findUnique({ where: { id: requestId } });
-    if (!targetReq) return false;
-
-    if (targetReq.status === 'APPROVED') {
-      await tx.food.update({
-        where: { id: targetReq.foodId },
-        data: { status: 'AVAILABLE' },
-      });
-    }
-
-    await tx.pickupRequest.update({
+  try {
+    await prisma.pickupRequest.update({
       where: { id: requestId },
       data: { status: 'CANCELLED', activeFlag: null },
     });
-
     return true;
-  });
+  } catch (err: any) {
+    if (err?.code === 'P2025') return false;
+    throw err;
+  }
 }
 
 export async function markAsTakenDb(foodId: string, _currentUserId?: string, requestId?: string) {
-  return await prisma.$transaction(async (tx) => {
-    const food = await tx.food.findUnique({ where: { id: foodId } });
-    const nowFormatted = formatWaktuId();
+  const nowFormatted = formatWaktuId();
 
-    const targetRequests = requestId
-      ? await tx.pickupRequest.findMany({ where: { id: requestId, foodId, status: 'APPROVED' } })
-      : await tx.pickupRequest.findMany({ where: { foodId, status: 'APPROVED' } });
+  const [food, targetRequests] = await Promise.all([
+    prisma.food.findUnique({ where: { id: foodId }, select: { userId: true } }),
+    prisma.pickupRequest.findMany({
+      where: requestId ? { id: requestId, foodId, status: 'APPROVED' } : { foodId, status: 'APPROVED' },
+      select: { id: true, requesterId: true },
+    }),
+  ]);
 
-    const completedCount = Math.max(1, targetRequests.length);
-
-    if (requestId) {
-      await tx.pickupRequest.updateMany({
-        where: { id: requestId, foodId, status: 'APPROVED' },
-        data: { status: 'COMPLETED', respondedAt: nowFormatted, activeFlag: null },
-      });
-    } else {
-      await tx.pickupRequest.updateMany({
-        where: { foodId, status: 'APPROVED' },
-        data: { status: 'COMPLETED', respondedAt: nowFormatted, activeFlag: null },
-      });
-    }
-
-    if (food?.userId) {
-      await tx.user.update({
-        where: { id: food.userId },
-        data: { sharedCount: { increment: completedCount } },
-      });
-    }
-
-    for (const r of targetRequests) {
-      if (r.requesterId) {
-        await tx.user.update({
-          where: { id: r.requesterId },
-          data: { receivedCount: { increment: 1 } },
-        });
-      }
-    }
-
-    await tx.activity.create({
+  const completedCount = Math.max(1, targetRequests.length);
+  const ops: Promise<any>[] = [
+    prisma.pickupRequest.updateMany({
+      where: requestId ? { id: requestId, foodId, status: 'APPROVED' } : { foodId, status: 'APPROVED' },
+      data: { status: 'COMPLETED', respondedAt: nowFormatted, activeFlag: null },
+    }),
+    prisma.activity.create({
       data: {
         id: `act-${Date.now()}`,
         userId: food?.userId || 'user-budi',
@@ -748,10 +753,31 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
         status: 'COMPLETED',
         targetUrl: '/dashboard/riwayat',
       },
-    });
+    }),
+  ];
 
-    return true;
-  });
+  if (food?.userId) {
+    ops.push(
+      prisma.user.update({
+        where: { id: food.userId },
+        data: { sharedCount: { increment: completedCount } },
+      })
+    );
+  }
+
+  for (const r of targetRequests) {
+    if (r.requesterId) {
+      ops.push(
+        prisma.user.update({
+          where: { id: r.requesterId },
+          data: { receivedCount: { increment: 1 } },
+        })
+      );
+    }
+  }
+
+  await Promise.all(ops);
+  return true;
 }
 
 export async function resetDatabase() {

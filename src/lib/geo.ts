@@ -70,7 +70,7 @@ export function extractCoordsFromText(text: string): Coordinates | null {
 export async function geocodeAddress(query: string): Promise<Coordinates | null> {
   if (!query || query.trim().length < 3) return null;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 4000);
+  const timer = setTimeout(() => controller.abort(), 2000);
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=id&q=${encodeURIComponent(query.trim())}`,
@@ -112,7 +112,7 @@ export async function resolveMapsCoordinates(
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), 2500);
 
   try {
     const res = await fetch(trimmed, {

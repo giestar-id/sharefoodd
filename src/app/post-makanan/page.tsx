@@ -206,7 +206,7 @@ function PostMakananContent() {
             ],
       });
 
-      showToast('Berhasil diposting dan tersimpan di Cloud Database!');
+      showToast('Makanan berhasil disimpan dan dipublikasikan!', 'success');
 
       // Reset form
       setFoodTitle('');

@@ -900,7 +900,7 @@ export async function markAsTakenDb(foodId: string, _currentUserId?: string, req
           userId: food.userId,
           type: 'taken',
           title: 'Penyerahan Selesai',
-          description: 'Makanan berhasil diserahterimakan dan ditandai TAKEN',
+          description: 'Makanan berhasil diserahterimakan',
           timestamp: 'Baru saja',
           status: 'COMPLETED',
           targetUrl: '/dashboard/riwayat',

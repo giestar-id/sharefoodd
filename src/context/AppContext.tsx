@@ -284,7 +284,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify(optimisticFood),
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error('Gagal menyimpan makanan ke database');
+        if (!res.ok) throw new Error('Gagal menyimpan makanan. Silakan coba lagi.');
         const createdFood: FoodItem = await res.json();
         setFoods((prev) => prev.map((f) => (f.id === foodId ? createdFood : f)));
       })
@@ -482,7 +482,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         id: `act-${Date.now()}`,
         type: 'taken',
         title: 'Penyerahan Selesai',
-        description: `Makanan berhasil diserahterimakan dan ditandai TAKEN`,
+        description: `Makanan berhasil diserahterimakan`,
         timestamp: 'Baru saja',
         status: 'COMPLETED',
         targetUrl: '/dashboard/riwayat',

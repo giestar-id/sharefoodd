@@ -114,12 +114,17 @@ function AmbilMakananContent() {
   const [isOrdering, setIsOrdering] = useState(false);
 
   // Toast State
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
+  const showToast = (msg: string, type?: 'success' | 'error') => {
+    const resolvedType =
+      type ||
+      (/gagal|batas|tidak|harap|habis|dibatalkan|ditolak|sudah tercatat|error/i.test(msg)
+        ? 'error'
+        : 'success');
+    setToast({ message: msg, type: resolvedType });
     setTimeout(() => {
-      setToastMessage(null);
+      setToast(null);
     }, 3200);
   };
 
@@ -351,8 +356,11 @@ function AmbilMakananContent() {
           .ambil-mobile-nav {
             display: flex !important;
           }
-          body, .container {
-            padding-bottom: 70px;
+          .container {
+            padding-bottom: 1.5rem;
+          }
+          .footer {
+            padding-bottom: 76px;
           }
         }
 
@@ -669,12 +677,17 @@ function AmbilMakananContent() {
         }
 
         .toast {
-          background-color: #6B1D2F;
+          background-color: #2E7D32;
           color: #FFFFFF;
           padding: 0.75rem 1.25rem;
           border-radius: 6px;
           font-size: 0.9rem;
+          font-weight: 600;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.toast-error {
+          background-color: #C62828;
         }
 
         /* MODAL */
@@ -726,7 +739,11 @@ function AmbilMakananContent() {
 
       {/* TOAST CONTAINER */}
       <div id="toast-container">
-        {toastMessage && <div className="toast">{toastMessage}</div>}
+        {toast && (
+          <div className={`toast ${toast.type === 'error' ? 'toast-error' : ''}`}>
+            {toast.message}
+          </div>
+        )}
       </div>
 
       {/* NAVBAR DESKTOP */}

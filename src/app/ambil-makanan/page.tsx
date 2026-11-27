@@ -38,31 +38,70 @@ function AmbilMakananContent() {
   // Real-time Buyer Geolocation State
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationStatus, setLocationStatus] = useState<'loading' | 'granted' | 'denied'>('loading');
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const requestUserLocation = () => {
     if (typeof window === 'undefined' || !('geolocation' in navigator)) {
       setLocationStatus('denied');
+      setLocationError('Browser tidak mendukung deteksi lokasi.');
       return;
     }
+
     setLocationStatus('loading');
+    setLocationError(null);
+
+    const onSuccess = (pos: GeolocationPosition) => {
+      const coords = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
+      setUserLocation(coords);
+      setLocationStatus('granted');
+      setLocationError(null);
+      try {
+        sessionStorage.setItem('sharefood_user_loc', JSON.stringify(coords));
+      } catch {}
+    };
+
+    // Use fast Wi-Fi/Network/GPS fix first (resolves in <1s on laptops & indoor phones)
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        setLocationStatus('granted');
+      onSuccess,
+      (err) => {
+        if (err.code === 1) {
+          // PERMISSION_DENIED
+          setUserLocation(null);
+          setLocationStatus('denied');
+          setLocationError('Izin lokasi ditolak browser. Aktifkan izin lokasi di pengaturan browser Anda.');
+          return;
+        }
+        // On TIMEOUT (3) or POSITION_UNAVAILABLE (2), auto-retry once with relaxed cached fallback
+        navigator.geolocation.getCurrentPosition(
+          onSuccess,
+          () => {
+            setLocationStatus('denied');
+            setLocationError('Gagal mendeteksi lokasi perangkat. Pastikan GPS / Layanan Lokasi aktif.');
+          },
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 }
+        );
       },
-      () => {
-        // If permission denied or unavailable, keep null -> show all foods without distance filter
-        setUserLocation(null);
-        setLocationStatus('denied');
-      },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
   };
 
   useEffect(() => {
+    // Restore cached session location immediately so UI feels instant, then refresh in background
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('sharefood_user_loc');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (typeof parsed?.lat === 'number' && typeof parsed?.lng === 'number') {
+            setUserLocation(parsed);
+            setLocationStatus('granted');
+          }
+        }
+      } catch {}
+    }
     requestUserLocation();
   }, []);
 
@@ -760,24 +799,25 @@ function AmbilMakananContent() {
                 ? '📍 Lokasi GPS aktif — makanan diurutkan otomatis dari yang terdekat'
                 : locationStatus === 'loading'
                 ? '📍 Mendeteksi lokasi Anda...'
-                : '📍 Izin lokasi belum aktif — menampilkan semua makanan tanpa filter jarak'}
+                : `📍 ${locationError || 'Izin lokasi belum aktif — menampilkan semua makanan tanpa filter jarak'}`}
             </span>
             {locationStatus !== 'granted' && (
               <button
                 type="button"
+                disabled={locationStatus === 'loading'}
                 onClick={requestUserLocation}
                 style={{
-                  backgroundColor: '#6B1D2F',
+                  backgroundColor: locationStatus === 'loading' ? '#999999' : '#6B1D2F',
                   color: '#FFFFFF',
                   border: 'none',
                   borderRadius: '4px',
                   padding: '4px 10px',
                   fontSize: '0.75rem',
                   fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: locationStatus === 'loading' ? 'wait' : 'pointer',
                 }}
               >
-                Aktifkan Lokasi
+                {locationStatus === 'loading' ? 'Mendeteksi...' : 'Aktifkan Lokasi'}
               </button>
             )}
           </div>

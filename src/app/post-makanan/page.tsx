@@ -91,28 +91,40 @@ function PostMakananContent() {
     }
   };
 
-  // GPS capture helper for seller
+  // GPS capture helper for seller (fast Wi-Fi/GPS fix with automatic fallback)
   const handleGetSellerGps = () => {
     if (typeof window === 'undefined' || !('geolocation' in navigator)) {
       showToast('Browser tidak mendukung deteksi GPS.');
       return;
     }
     setIsGettingGps(true);
+    const onSuccess = (pos: GeolocationPosition) => {
+      const lat = Number(pos.coords.latitude.toFixed(6));
+      const lng = Number(pos.coords.longitude.toFixed(6));
+      setFoodLat(lat);
+      setFoodLng(lng);
+      setMapsUrl(`https://www.google.com/maps?q=${lat},${lng}`);
+      setIsGettingGps(false);
+      showToast('Koordinat GPS toko berhasil diambil!');
+    };
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = Number(pos.coords.latitude.toFixed(6));
-        const lng = Number(pos.coords.longitude.toFixed(6));
-        setFoodLat(lat);
-        setFoodLng(lng);
-        setMapsUrl(`https://www.google.com/maps?q=${lat},${lng}`);
-        setIsGettingGps(false);
-        showToast('Koordinat GPS toko berhasil diambil!');
+      onSuccess,
+      (err) => {
+        if (err.code === 1) {
+          setIsGettingGps(false);
+          showToast('Izin lokasi ditolak. Silakan tempel link Google Maps secara manual.');
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          onSuccess,
+          () => {
+            setIsGettingGps(false);
+            showToast('Gagal mendeteksi GPS. Pastikan Layanan Lokasi aktif atau tempel link Maps.');
+          },
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 }
+        );
       },
-      () => {
-        setIsGettingGps(false);
-        showToast('Izin lokasi ditolak. Silakan tempel link Google Maps secara manual.');
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
   };
 

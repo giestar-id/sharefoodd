@@ -6,7 +6,12 @@ export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get(SESSION_COOKIE_NAME)?.value ?? null;
     const data = await getAllDataByToken(token);
-    return NextResponse.json(data);
+    const res = NextResponse.json(data);
+    // Clear stale/expired session cookie so middleware immediately protects routes
+    if (token && !data.user) {
+      res.cookies.delete(SESSION_COOKIE_NAME);
+    }
+    return res;
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

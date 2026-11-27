@@ -606,26 +606,60 @@ function PostMakananContent() {
 
         #toast-container {
           position: fixed;
-          top: 20px;
-          right: 20px;
+          top: 16px;
+          right: 16px;
           z-index: 3000;
           display: flex;
           flex-direction: column;
+          align-items: flex-end;
           gap: 10px;
+          pointer-events: none;
+          max-width: calc(100vw - 32px);
+        }
+
+        @keyframes toastSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
 
         .toast {
           background-color: #2E7D32;
           color: #FFFFFF;
-          padding: 0.75rem 1.25rem;
-          border-radius: 6px;
-          font-size: 0.9rem;
+          padding: 0.7rem 1.15rem;
+          border-radius: 10px;
+          font-size: 0.88rem;
           font-weight: 600;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          line-height: 1.4;
+          max-width: min(360px, calc(100vw - 24px));
+          width: fit-content;
+          word-break: break-word;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+          animation: toastSlideIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+          pointer-events: auto;
         }
 
         .toast.toast-error {
           background-color: #C62828;
+        }
+
+        @media (max-width: 600px) {
+          #toast-container {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+          }
+          .toast {
+            font-size: 0.82rem;
+            padding: 0.6rem 0.95rem;
+            max-width: calc(100vw - 20px);
+          }
         }
 
         /* KARTU ITEM & LIST STYLING (baru/post-makanan.html) */

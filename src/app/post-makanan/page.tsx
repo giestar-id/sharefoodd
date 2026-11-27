@@ -188,9 +188,9 @@ function PostMakananContent() {
     }
   };
 
-  // Filter Seller's Foods & Requests (Strictly matched by userId FK; hide if stock/quantity <= 0)
+  // Filter Seller's Foods & Requests (Strictly matched by userId FK; keep 0-stock visible in Kelola Post so seller can restock)
   const myFoods = foods.filter((f) => Boolean(user?.id) && f.userId === user?.id);
-  const myActiveFoods = myFoods.filter((f) => f.status === 'AVAILABLE' && Number(f.quantity) > 0);
+  const myActiveFoods = myFoods.filter((f) => f.status === 'AVAILABLE');
 
   // Filter incoming requests for seller's foods
   const myFoodIds = new Set(myFoods.map((f) => f.id));

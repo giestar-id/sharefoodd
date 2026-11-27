@@ -39,7 +39,6 @@ function PostMakananContent() {
   const [mapsUrl, setMapsUrl] = useState('');
   const [foodLat, setFoodLat] = useState<number | null>(null);
   const [foodLng, setFoodLng] = useState<number | null>(null);
-  const [isGettingGps, setIsGettingGps] = useState(false);
   const [addressNote, setAddressNote] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState(user?.phone || '081234567890');
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
@@ -91,42 +90,44 @@ function PostMakananContent() {
     }
   };
 
-  // GPS capture helper for seller (fast Wi-Fi/GPS fix with automatic fallback)
-  const handleGetSellerGps = () => {
-    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
-      showToast('Browser tidak mendukung deteksi GPS.');
-      return;
-    }
-    setIsGettingGps(true);
-    const onSuccess = (pos: GeolocationPosition) => {
-      const lat = Number(pos.coords.latitude.toFixed(6));
-      const lng = Number(pos.coords.longitude.toFixed(6));
+  // Automatically detect seller GPS coordinates on mount & pre-fill Google Maps URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const applyCoords = (latRaw: number, lngRaw: number) => {
+      const lat = Number(latRaw.toFixed(6));
+      const lng = Number(lngRaw.toFixed(6));
       setFoodLat(lat);
       setFoodLng(lng);
-      setMapsUrl(`https://www.google.com/maps?q=${lat},${lng}`);
-      setIsGettingGps(false);
-      showToast('Koordinat GPS toko berhasil diambil!');
+      setMapsUrl((prev) => (prev ? prev : `https://www.google.com/maps?q=${lat},${lng}`));
     };
-    navigator.geolocation.getCurrentPosition(
-      onSuccess,
-      (err) => {
-        if (err.code === 1) {
-          setIsGettingGps(false);
-          showToast('Izin lokasi ditolak. Silakan tempel link Google Maps secara manual.');
-          return;
+
+    try {
+      const cached = sessionStorage.getItem('sharefood_user_loc');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (typeof parsed?.lat === 'number' && typeof parsed?.lng === 'number') {
+          applyCoords(parsed.lat, parsed.lng);
         }
-        navigator.geolocation.getCurrentPosition(
-          onSuccess,
-          () => {
-            setIsGettingGps(false);
-            showToast('Gagal mendeteksi GPS. Pastikan Layanan Lokasi aktif atau tempel link Maps.');
-          },
-          { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 }
-        );
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
-    );
-  };
+      }
+    } catch {}
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          applyCoords(pos.coords.latitude, pos.coords.longitude);
+          try {
+            sessionStorage.setItem(
+              'sharefood_user_loc',
+              JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+            );
+          } catch {}
+        },
+        () => {},
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+  }, []);
 
   // Form Submit Handler
   const handleFormPost = async (e: React.FormEvent) => {
@@ -887,36 +888,19 @@ function PostMakananContent() {
 
                 <div className="form-group">
                   <label htmlFor="maps_url">Link Google Maps Toko / Rumah</label>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <input
-                      type="url"
-                      id="maps_url"
-                      className="form-control"
-                      style={{ flex: 1, minWidth: '200px' }}
-                      placeholder="https://maps.google.com/..."
-                      value={mapsUrl}
-                      onChange={(e) => {
-                        setMapsUrl(e.target.value);
-                        setFoodLat(null);
-                        setFoodLng(null);
-                      }}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={handleGetSellerGps}
-                      disabled={isGettingGps}
-                      className="btn-act btn-complete"
-                      style={{ whiteSpace: 'nowrap' }}
-                    >
-                      {isGettingGps ? 'Mendeteksi...' : '📍 Ambil Lokasi GPS'}
-                    </button>
-                  </div>
-                  {foodLat !== null && foodLng !== null && (
-                    <small style={{ color: '#2E7D32', fontWeight: 600, display: 'block', marginTop: '4px' }}>
-                      ✓ Koordinat GPS tersimpan ({foodLat}, {foodLng})
-                    </small>
-                  )}
+                  <input
+                    type="url"
+                    id="maps_url"
+                    className="form-control"
+                    placeholder="https://maps.google.com/..."
+                    value={mapsUrl}
+                    onChange={(e) => {
+                      setMapsUrl(e.target.value);
+                      setFoodLat(null);
+                      setFoodLng(null);
+                    }}
+                    required
+                  />
                 </div>
 
                 <div className="form-group">
